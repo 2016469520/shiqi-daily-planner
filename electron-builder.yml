@@ -1,0 +1,38 @@
+appId: app.local.plancalendar
+productName: 时格
+copyright: 个人项目
+
+directories:
+  output: dist
+  buildResources: resources
+
+# 只打包静态前端与 Electron 主进程：前端已完全静态化，
+# 运行时不需要 node_modules（主进程只用 electron 本体与 Node 内置模块）
+files:
+  - out/**/*
+  - electron/**/*
+  - package.json
+  - "!node_modules/**/*"
+  - "!**/*.map"
+
+# 没有原生依赖，跳过 rebuild 可以显著加快打包
+npmRebuild: false
+
+asar: true
+compression: normal
+
+win:
+  target:
+    - target: portable
+      arch:
+        - x64
+  icon: resources/icon.ico
+  artifactName: TimeGrid-${version}-portable.${ext}
+  requestedExecutionLevel: asInvoker
+
+portable:
+  artifactName: TimeGrid-${version}-portable.${ext}
+  unpackDirName: TimeGrid
+
+# 打包结果不参与签名（个人使用，无证书）
+forceCodeSigning: false

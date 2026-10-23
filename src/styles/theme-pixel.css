@@ -1,0 +1,223 @@
+﻿/* ============================================================
+   Theme 05 · 像素机 Retro Pixel（8-bit 街机）
+   ------------------------------------------------------------
+   设计意图：把界面当成一台老掌机的屏幕——米黄纸感的底、零圆角、
+   2px 硬边、右下角错位的实心投影。层级不靠模糊，靠"块"的位移；
+   动效不是缓动，是 steps() 的分步跳变。
+   像素感只给边框、标题与装饰，正文仍是清晰的深墨色，保证可读。
+   ============================================================ */
+
+[data-theme='pixel'] {
+  --background: #f4f1ea;
+  --foreground: #1a1c2c;
+  --surface: #fffdf6;
+  --surface-2: #ece7db;
+  --card: #fffdf6;
+  --card-foreground: #1a1c2c;
+  --popover: #fffdf6;
+  --popover-foreground: #1a1c2c;
+
+  --primary: #d7263d;
+  --primary-foreground: #fffdf6;
+  --secondary: #29adff;
+  --secondary-foreground: #071a2b;
+
+  --muted: #e9e3d5;
+  --muted-foreground: #52566e;
+  --accent: #e2f1ff;
+  --accent-foreground: #0b3a5c;
+
+  --destructive: #b31530;
+  --destructive-foreground: #fffdf6;
+
+  --border: #cdc5b4;
+  --border-strong: #1a1c2c;
+  --input: #b9b1a0;
+  --ring: #d7263d;
+
+  --success: #1f7a3d;
+  --warning: #9a5b00;
+  --info: #1c6fb0;
+  --period-morning: #a86400;
+  --period-afternoon: #1c6fb0;
+  --period-evening: #6a3fb5;
+
+  --chart-1: #d7263d;
+  --chart-2: #29adff;
+  --chart-3: #e0a400;
+  --chart-4: #1f7a3d;
+  --chart-5: #6a3fb5;
+  --sidebar: #efeade;
+  --sidebar-foreground: #1a1c2c;
+  --sidebar-primary: #d7263d;
+  --sidebar-primary-foreground: #fffdf6;
+  --sidebar-accent: #e2f1ff;
+  --sidebar-accent-foreground: #0b3a5c;
+  --sidebar-border: #cdc5b4;
+  --sidebar-ring: #d7263d;
+
+  /* 投影一律不模糊：4/6/8px 的实心错位块 */
+  --shadow-card: 4px 4px 0 #1a1c2c;
+  --shadow-float: 6px 6px 0 #1a1c2c;
+  --shadow-pop: 8px 8px 0 #1a1c2c;
+
+  /* 结构签名：零圆角 */
+  --radius: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+  --radius-input: 0px;
+
+  /* 等宽 + 全大写 + 大字距，像终端里的分区标题 */
+  --heading-font: 'Cascadia Mono', Consolas, 'Sarasa Mono SC', ui-monospace, monospace;
+  --heading-weight: 700;
+  --heading-tracking: 0.08em;
+  --heading-transform: uppercase;
+
+  --card-border-w: 2px;
+  --card-border-color: #1a1c2c;
+  --card-shadow: 4px 4px 0 #1a1c2c;
+  --card-inset-opacity: 0;
+  --nav-active-bg: #d7263d;
+  --nav-active-color: #fffdf6;
+
+  /* 8px 一格的极淡点阵，只做纸面纹理 */
+  --deco-image: radial-gradient(circle, rgba(26, 28, 44, 0.06) 1px, transparent 1px);
+  --deco-size: 8px 8px;
+  --deco-opacity: 1;
+  --focus-ring-w: 3px;
+
+  /* 分步跳变，不做平滑过渡 */
+  --motion-fast: 60ms;
+  --motion-base: 90ms;
+  --motion-slow: 140ms;
+  --ease-standard: steps(2, end);
+}
+/* 深夜机台：底色压到蓝黑，红比白天更亮，阴影变纯黑 */
+[data-theme='pixel'].dark {
+  --background: #14162b;
+  --foreground: #f2f0e4;
+  --surface: #1d2040;
+  --surface-2: #232751;
+  --card: #1d2040;
+  --card-foreground: #f2f0e4;
+  --popover: #232751;
+  --popover-foreground: #f2f0e4;
+  --primary: #ff5470;
+  --primary-foreground: #1a0010;
+  --secondary: #29adff;
+  --secondary-foreground: #041525;
+  --muted: #262a4d;
+  --muted-foreground: #a9aecf;
+  --accent: #2a3057;
+  --accent-foreground: #cfe6ff;
+  --destructive: #ff7a8a;
+  --destructive-foreground: #2a0008;
+  --border: rgba(255, 255, 255, 0.14);
+  --border-strong: #6a6fa8;
+  --input: rgba(255, 255, 255, 0.2);
+  --ring: #ff5470;
+
+  --success: #5fe0a0;
+  --warning: #ffcc66;
+  --info: #6fd0ff;
+  --period-morning: #ffcc66;
+  --period-afternoon: #6fd0ff;
+  --period-evening: #b9a0ff;
+
+  --chart-1: #ff5470;
+  --chart-2: #6fd0ff;
+  --chart-3: #ffcc66;
+  --chart-4: #5fe0a0;
+  --chart-5: #b9a0ff;
+
+  --sidebar: #101228;
+  --sidebar-foreground: #e6e3d6;
+  --sidebar-primary: #ff5470;
+  --sidebar-primary-foreground: #1a0010;
+  --sidebar-accent: #2a3057;
+  --sidebar-accent-foreground: #cfe6ff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #ff5470;
+  --shadow-card: 4px 4px 0 #05060f;
+  --shadow-float: 6px 6px 0 #05060f;
+  --shadow-pop: 8px 8px 0 #05060f;
+  --card-border-color: #4a5188;
+  --card-shadow: 4px 4px 0 #05060f;
+  --nav-active-bg: #ff5470;
+  --nav-active-color: #1a0010;
+  --deco-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+/* 侧栏选中项：实心红块 + 反白文字 + ▶ 光标（隐藏默认的 3px 指示条） */
+/* 选中项留出左侧装订线，避免 ▶ 压住图标 */
+[data-theme='pixel'] aside a[aria-current='page'] {
+  padding-left: 16px;
+}
+
+[data-theme='pixel'] aside a[aria-current='page']::before {
+  content: '▶';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  translate: 0 -50%;
+  font-size: 9px;
+  line-height: 1;
+  color: var(--nav-active-color);
+  pointer-events: none;
+}
+[data-theme='pixel'] aside a[aria-current='page'] > span[aria-hidden='true'] {
+  opacity: 0;
+}
+
+/* 按钮：硬投影 + 按下错位 2px；文字链接式按钮不参与 */
+[data-theme='pixel'] button:not(:disabled):not([class*='underline-offset']) {
+  border-radius: 0;
+  box-shadow: 2px 2px 0 var(--foreground);
+  transition:
+    transform var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard);
+}
+[data-theme='pixel'] button:active:not(:disabled):not([class*='underline-offset']) {
+  translate: none;
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+/* 分区标题前缀：只挂真正的标题，不碰正文与数字 */
+[data-theme='pixel'] h2.text-section::before,
+[data-theme='pixel'] h3.text-section::before,
+[data-theme='pixel'] [data-slot='card-title']::before {
+  content: '▚  ';
+  color: var(--primary);
+}
+
+/* 进度条 / 徽章去圆角；头像与头像内元素保持圆形 */
+[data-theme='pixel'] .surface .rounded-full:not([data-slot='avatar'], [data-slot='avatar'] *) {
+  border-radius: 0;
+}
+
+/* 浮层：硬边 + 实心偏移，不加 overflow，避免切掉下拉 */
+[data-theme='pixel'] [role='dialog'],
+[data-theme='pixel'] [role='menu'],
+[data-theme='pixel'] [data-slot='select-content'] {
+  border: 2px solid var(--card-border-color);
+  border-radius: 0;
+  box-shadow: var(--shadow-pop);
+}
+
+/* 焦点环：方角、加粗，和像素边一致 */
+[data-theme='pixel'] :focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* 选中文字也换成机台配色 */
+[data-theme='pixel'] ::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}

@@ -1,0 +1,183 @@
+/* ============================================================
+   Theme 02 · 霓虹终端 Cyberpunk（HUD 科幻）
+   ------------------------------------------------------------
+   只提供深色：深空底 #05070d、面板 #0b1220，青 #22d3ee 是唯一主光，
+   品红 #f472b6 只留给危险/警告；正文 #d7f7ff 对底色约 17:1，
+   次级文字 #8fb8c9 约 10:1，均远高于 4.5:1。
+   克制发光：只有选中态、进度条、状态点带 12px 级柔光，卡片不发光。
+   机械感来自结构：等宽大写标题 + 0.12em 字距、1px 半透明青描边、
+   四角 L 形 HUD 括号、按钮切角、输入框内发光。
+   数字不改字体（.tabular-nums 仍用正文字体），避免统计与标签错位。
+   ============================================================ */
+
+[data-theme='cyber'] {
+  /* 调色板 · 唯一深色 */
+  --background: #05070d;
+  --foreground: #d7f7ff;
+  --surface: #0b1220;
+  --surface-2: #0e1729;
+  --card: #0b1220;
+  --card-foreground: #d7f7ff;
+  --popover: #0a101c;
+  --popover-foreground: #d7f7ff;
+
+  --primary: #22d3ee;
+  --primary-foreground: #04141a;
+  --secondary: #122033;
+  --secondary-foreground: #bfe9f5;
+  --muted: #101a2b;
+  --muted-foreground: #8fb8c9;
+  --accent: rgba(34, 211, 238, 0.1);
+  --accent-foreground: #a5f3fc;
+
+  --destructive: #f472b6;
+  --destructive-foreground: #2a0716;
+  --border: rgba(34, 211, 238, 0.16);
+  --border-strong: rgba(34, 211, 238, 0.38);
+  --input: rgba(34, 211, 238, 0.22);
+  --ring: #22d3ee;
+
+  --success: #34d399;
+  --warning: #fbbf24;
+  --info: #67e8f9;
+  --period-morning: #fbbf24;
+  --period-afternoon: #22d3ee;
+  --period-evening: #818cf8;
+
+  --chart-1: #22d3ee;
+  --chart-2: #f472b6;
+  --chart-3: #818cf8;
+  --chart-4: #34d399;
+  --chart-5: #fbbf24;
+
+  --sidebar: #070b14;
+  --sidebar-foreground: #c7ecf7;
+  --sidebar-primary: #22d3ee;
+  --sidebar-primary-foreground: #04141a;
+  --sidebar-accent: rgba(34, 211, 238, 0.08);
+  --sidebar-accent-foreground: #a5f3fc;
+  --sidebar-border: rgba(34, 211, 238, 0.14);
+  --sidebar-ring: #22d3ee;
+
+  /* 投影压暗，冷光只做一丝轮廓，不给卡片加发光 */
+  --shadow-card: 0 0 0 1px rgba(34, 211, 238, 0.05), 0 12px 32px -20px rgba(6, 182, 212, 0.4);
+  --shadow-float: 0 18px 40px -24px rgba(6, 182, 212, 0.5), 0 2px 10px -6px rgba(0, 0, 0, 0.8);
+  --shadow-pop: 0 28px 64px -28px rgba(6, 182, 212, 0.45), 0 8px 24px -12px rgba(0, 0, 0, 0.85);
+
+  /* 结构签名：小圆角 + 切角、等宽大写标题、青描边 */
+  --radius: 4px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 10px;
+  --radius-4xl: 12px;
+  --radius-input: 2px;
+
+  --heading-font: 'Cascadia Mono', Consolas, 'Sarasa Mono SC', ui-monospace, monospace;
+  --heading-weight: 600;
+  --heading-tracking: 0.12em;
+  --heading-transform: uppercase;
+
+  --card-border-w: 1px;
+  --card-border-color: rgba(34, 211, 238, 0.28);
+  --card-shadow: 0 12px 32px -22px rgba(6, 182, 212, 0.35), 0 1px 0 rgba(34, 211, 238, 0.04);
+  --card-inset-opacity: 0;
+
+  --nav-active-bg: rgba(34, 211, 238, 0.08);
+  --nav-active-color: #67e8f9;
+
+  /* 细网格（双向 1px、≤0.05）+ 一层极淡的中心径向光 */
+  --deco-image:
+    radial-gradient(900px 520px at 50% -10%, rgba(34, 211, 238, 0.06), transparent 68%),
+    repeating-linear-gradient(0deg, rgba(34, 211, 238, 0.045) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, rgba(34, 211, 238, 0.045) 0 1px, transparent 1px 28px);
+  --deco-size: cover;
+  --deco-opacity: 1;
+
+  --focus-ring-w: 2px;
+  --input-bg: rgba(34, 211, 238, 0.04);
+  --motion-fast: 90ms;
+  --motion-base: 140ms;
+  --motion-slow: 220ms;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* 卡片：HUD 四角 L 形括号，画在 .surface::after 上，不占布局也不裁剪内容 */
+[data-theme='cyber'] .surface::after,
+[data-theme='cyber'] .surface-2::after {
+  --hud-arm: linear-gradient(rgba(34, 211, 238, 0.5), rgba(34, 211, 238, 0.5));
+  opacity: 1;
+  background-image:
+    var(--hud-arm), var(--hud-arm), var(--hud-arm), var(--hud-arm), var(--hud-arm), var(--hud-arm),
+    var(--hud-arm), var(--hud-arm);
+  background-size: 9px 1px, 1px 9px, 9px 1px, 1px 9px, 9px 1px, 1px 9px, 9px 1px, 1px 9px;
+  background-position:
+    left 9px top 9px, left 9px top 9px, right 9px top 9px, right 9px top 9px, left 9px bottom 9px,
+    left 9px bottom 9px, right 9px bottom 9px, right 9px bottom 9px;
+  background-repeat: no-repeat;
+}
+
+/* 侧栏：左缘发光竖线；选中项青色 2px 条 + 8% 青底（inset 画线，不改尺寸） */
+[data-theme='cyber'] aside {
+  border-right-color: var(--sidebar-border);
+  box-shadow: inset 1px 0 0 rgba(34, 211, 238, 0.3), inset 22px 0 36px -32px rgba(34, 211, 238, 0.55);
+}
+[data-theme='cyber'] aside a[aria-current='page'],
+[data-theme='cyber'] aside a[data-active='true'] {
+  box-shadow: inset 2px 0 0 var(--primary), 0 0 18px -8px rgba(34, 211, 238, 0.6);
+  font-weight: 600;
+}
+
+/* 按钮：右上/左下切 6px，hover 边框亮起；切角会裁掉外描边，焦点改用 inset 描边 */
+[data-theme='cyber'] [data-slot='button'] {
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  letter-spacing: 0.04em;
+  transition: border-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
+}
+[data-theme='cyber'] [data-slot='button']:hover:not(:disabled) {
+  border-color: rgba(34, 211, 238, 0.55);
+  box-shadow: 0 0 14px -4px rgba(34, 211, 238, 0.45);
+}
+[data-theme='cyber'] [data-slot='button']:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--ring), 0 0 14px -4px rgba(34, 211, 238, 0.5);
+}
+
+/* 输入框：青底（见 --input-bg）+ 聚焦青描边与轻微内发光 */
+[data-theme='cyber'] input:not([type='checkbox']):not([type='radio']),
+[data-theme='cyber'] textarea,
+[data-theme='cyber'] select {
+  border-color: var(--input);
+  transition: border-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard);
+}
+[data-theme='cyber'] input:not([type='checkbox']):not([type='radio']):focus-visible,
+[data-theme='cyber'] textarea:focus-visible,
+[data-theme='cyber'] select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 10px -4px rgba(34, 211, 238, 0.55);
+}
+
+/* 发光只出现在有状态的控件：状态点、进度、开关、勾选 */
+[data-theme='cyber'] .period-dot,
+[data-theme='cyber'] [data-slot='progress-indicator'],
+[data-theme='cyber'] [data-slot='switch'][data-checked],
+[data-theme='cyber'] [data-slot='checkbox'][data-checked] {
+  box-shadow: 0 0 12px color-mix(in oklab, var(--primary) 45%, transparent);
+}
+
+/* 浮层：青描边 + 深投影（不加 overflow，保住下拉） */
+[data-theme='cyber'] [role='dialog'],
+[data-theme='cyber'] [role='menu'],
+[data-theme='cyber'] [data-slot='select-content'],
+[data-theme='cyber'] [data-slot='popover-content'] {
+  background-color: var(--popover);
+  border: 1px solid rgba(34, 211, 238, 0.32);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-pop);
+}
+
+/* 数字保持正文字体：等宽标题只作用于标题，统计数字不跟着错位 */
+[data-theme='cyber'] .tabular-nums {
+  font-family: var(--font-sans, ui-sans-serif, sans-serif);
+}

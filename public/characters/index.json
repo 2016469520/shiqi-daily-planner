@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-10-23T13:28:11.613Z",
+  "packs": [
+    {
+      "id": "feng_baobao",
+      "version": "1",
+      "manifest": {
+        "id": "feng_baobao",
+        "name": "冯宝宝",
+        "series": "一人之下",
+        "tags": [
+          "宝儿姐",
+          "黑长直",
+          "菜刀",
+          "国漫"
+        ],
+        "preferred_theme": "minimal",
+        "preferred_accent": "#3f7a6a",
+        "preferred_background": "minimal-lake",
+        "description": "一人之下的女主角，表情极少，手里常拎一把菜刀。六态透明立绘：待机、开心、思考、工作、出错、困倦。",
+        "dialogue": {
+          "idle": [
+            "看啥看？",
+            "天真无邪的我"
+          ],
+          "happy": [
+            "哦哦哦～"
+          ],
+          "thinking": [
+            "认真思考中",
+            "啥呢？",
+            "？？？？？"
+          ],
+          "working": [
+            "先做眼前这件事。"
+          ],
+          "error": [
+            "这回弄错了……"
+          ],
+          "sleepy": [
+            "乖乖睡吧"
+          ]
+        },
+        "redistribution_allowed": true
+      },
+      "display": "half_body.webp",
+      "states": {
+        "happy": "happy.png",
+        "thinking": "thinking.webp",
+        "working": "working.webp",
+        "error": "error.png",
+        "sleepy": "sleepy.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+/* ============================================================
+   Theme 06 · 暗格 Dark Bento（深色模块化 SaaS）
+   ------------------------------------------------------------
+   设计意图：深夜的仪表盘。近黑底上铺开大小不一的模块卡，1px 冷灰边、
+   顶部一道微光，让每块卡像一片薄玻璃浮在暗处。强调色是冰蓝，
+   只小面积点在最需要看的地方（选中项、进度、图表）；紫色只在
+   进度填充的末端出现，从不抢主色。
+   悬停只做 1px 上浮和描边提亮，动效短、克制，适合长时间盯着数据。
+   ============================================================ */
+
+[data-theme='bento'] {
+  --background: #0a0c11;
+  --foreground: #e7eaf0;
+
+  --surface: #12151d;
+  --surface-2: #171b25;
+  --card: #12151d;
+  --card-foreground: #e7eaf0;
+  --popover: #171b25;
+  --popover-foreground: #e7eaf0;
+
+  --primary: #7dd3fc;
+  --primary-foreground: #06131c;
+  --secondary: #1c2230;
+  --secondary-foreground: #dbe3ee;
+
+  --muted: #171b25;
+  --muted-foreground: #98a2b3;
+  --accent: rgba(125, 211, 252, 0.12);
+  --accent-foreground: #bfe8ff;
+
+  --destructive: #f87171;
+  --destructive-foreground: #1a0505;
+
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #7dd3fc;
+
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --info: #7dd3fc;
+
+  /* 晚间留给紫色，呼应进度条的渐变色尾 */
+  --period-morning: #fbbf24;
+  --period-afternoon: #7dd3fc;
+  --period-evening: #a78bfa;
+
+  --chart-1: #7dd3fc;
+  --chart-2: #a78bfa;
+  --chart-3: #38bdf8;
+  --chart-4: #34d399;
+  --chart-5: #fbbf24;
+
+  /* 侧栏比正文底再深一档，形成"机箱"与"模块"的层次 */
+  --sidebar: #0c0f15;
+  --sidebar-foreground: #cbd5e1;
+  --sidebar-primary: #7dd3fc;
+  --sidebar-primary-foreground: #06131c;
+  --sidebar-accent: rgba(125, 211, 252, 0.1);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-ring: #7dd3fc;
+
+  /* 内高光 + 向下衰减的深影，卡片像浮在暗底上 */
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 12px 32px -20px rgba(0, 0, 0, 0.8);
+  --shadow-float: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 20px 48px -24px rgba(0, 0, 0, 0.9);
+  --shadow-pop: 0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 32px 64px -24px rgba(0, 0, 0, 0.95);
+
+  /* 结构签名：大圆角模块 */
+  --radius: 14px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 28px;
+  --radius-4xl: 32px;
+  --radius-input: 10px;
+
+  /* 系统无衬线 + 收紧字距，标题要有"产品界面"的密度 */
+  --heading-font: ui-sans-serif, -apple-system, 'Segoe UI Variable Display', 'Inter', system-ui,
+    'Microsoft YaHei UI', sans-serif;
+  --heading-weight: 650;
+  --heading-tracking: -0.02em;
+  --heading-transform: none;
+
+  --card-border-w: 1px;
+  --card-border-color: rgba(255, 255, 255, 0.07);
+  --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 12px 32px -20px rgba(0, 0, 0, 0.8);
+  --card-inset-opacity: 1;
+
+  --nav-active-bg: rgba(125, 211, 252, 0.1);
+  --nav-active-color: #ffffff;
+
+  /* 32px 对齐网格 + 顶部一层中心冷光，都是极低透明度 */
+  --deco-image: radial-gradient(
+      1200px 600px at 50% -10%,
+      rgba(125, 211, 252, 0.05),
+      transparent 70%
+    ),
+    linear-gradient(to right, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  --deco-size: 100% 100%, 32px 32px, 32px 32px;
+  --deco-opacity: 1;
+
+  --focus-ring-w: 2px;
+
+  --motion-fast: 120ms;
+  --motion-base: 160ms;
+  --motion-slow: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* 卡片顶部微光：一条从白到透明的 40% 渐变，玻璃块的高光 */
+[data-theme='bento'] .surface::after,
+[data-theme='bento'] .surface-2::after {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 40%);
+}
+
+/* 悬停：描边提亮 + 1px 上浮，过渡固定 160ms */
+[data-theme='bento'] .surface-interactive {
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-standard);
+}
+[data-theme='bento'] .surface-interactive:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+/* 侧栏选中：浅冰蓝底 + 左侧 3px 冰蓝条 + 白字（条本身带一点冷光） */
+[data-theme='bento'] aside a[aria-current='page'] {
+  font-weight: 500;
+}
+[data-theme='bento'] aside a[aria-current='page'] > span[aria-hidden='true'] {
+  background-color: var(--primary);
+  box-shadow: 0 0 10px rgba(125, 211, 252, 0.55);
+}
+
+/* 进度填充：冰蓝 → 紫，只作用于 .surface 内的进度条，不碰按钮 */
+[data-theme='bento'] .surface .rounded-full.bg-primary,
+[data-theme='bento'] .surface .rounded-full.bg-success,
+[data-theme='bento'] .surface [data-slot='progress-indicator'] {
+  background-image: linear-gradient(90deg, #7dd3fc, #a78bfa);
+}
+
+/* 输入框：极浅填充 + 冷灰描边，聚焦时由焦点环接管 */
+[data-theme='bento']
+  input:not([type='checkbox']):not([type='radio']),
+[data-theme='bento'] textarea,
+[data-theme='bento'] select {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: var(--input);
+}
+
+/* 浮层：细描边 + 大投影；不加 overflow，保证下拉不被裁切 */
+[data-theme='bento'] [role='dialog'],
+[data-theme='bento'] [role='menu'],
+[data-theme='bento'] [data-slot='select-content'] {
+  border: 1px solid var(--border-strong);
+  background-color: var(--popover);
+  box-shadow: var(--shadow-pop);
+}
+
+/* 焦点环：冰蓝细环，不改变尺寸 */
+[data-theme='bento'] :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* 选中文字：冰蓝底 + 深色字 */
+[data-theme='bento'] ::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}

@@ -1,0 +1,196 @@
+/* ============================================================
+   Theme 03 · 云母 Fluent（Windows 11）
+   ------------------------------------------------------------
+   特征：云母半透明侧栏、克制的双层投影、WinUI 的强调色用法。
+   默认推荐主题：层次清楚但不打扰。
+   ============================================================ */
+
+[data-theme='fluent'] {
+  --background: #f3f3f3;
+  --foreground: #1b1b1f;
+
+  --surface: #ffffff;
+  --surface-2: #f7f7f8;
+  --card: #ffffff;
+  --card-foreground: #1b1b1f;
+  --popover: #ffffff;
+  --popover-foreground: #1b1b1f;
+
+  --primary: #0067c0;
+  --primary-foreground: #ffffff;
+  --secondary: #ededed;
+  --secondary-foreground: #303036;
+
+  --muted: #ededed;
+  --muted-foreground: #5c5c66;
+  --accent: #eaf3fc;
+  --accent-foreground: #004a8e;
+
+  --destructive: #c42b1c;
+  --destructive-foreground: #ffffff;
+
+  --border: #e3e3e6;
+  --border-strong: #cfcfd4;
+  --input: #dcdce1;
+  --ring: #0067c0;
+
+  --success: #0f7b0f;
+  --warning: #9d5d00;
+  --info: #005fb8;
+
+  --period-morning: #c98a2e;
+  --period-afternoon: #0f7b8a;
+  --period-evening: #5b5bd6;
+
+  --chart-1: #0067c0;
+  --chart-2: #0f7b8a;
+  --chart-3: #c98a2e;
+  --chart-4: #0f7b0f;
+  --chart-5: #c42b1c;
+
+  --sidebar: #f7f7f8;
+  --sidebar-foreground: #2b2b31;
+  --sidebar-primary: #0067c0;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e6eef8;
+  --sidebar-accent-foreground: #004a8e;
+  --sidebar-border: #e3e3e6;
+  --sidebar-ring: #0067c0;
+
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1);
+  --shadow-float: 0 8px 24px -8px rgba(16, 24, 40, 0.18), 0 2px 6px -2px rgba(16, 24, 40, 0.1);
+  --shadow-pop: 0 24px 56px -20px rgba(16, 24, 40, 0.28), 0 8px 20px -10px rgba(16, 24, 40, 0.14);
+
+  /* 结构 */
+  --radius: 8px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-4xl: 24px;
+  --radius-input: 4px;
+
+  --heading-font: 'Segoe UI Variable Display', 'Segoe UI', system-ui, 'Microsoft YaHei UI', sans-serif;
+  --heading-weight: 600;
+  --heading-tracking: -0.012em;
+  --heading-transform: none;
+
+  --card-border-w: 1px;
+  --card-border-color: #e6e6ea;
+  --card-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 2px 6px -2px rgba(16, 24, 40, 0.08);
+  --card-inset-opacity: 0;
+
+  --nav-active-bg: #e6eef8;
+  --nav-active-color: #004a8e;
+
+  --deco-image: none;
+  --focus-ring-w: 2px;
+
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-slow: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-theme='fluent'].dark {
+  --background: #1f1f1f;
+  --foreground: #f5f5f5;
+
+  --surface: #2b2b2b;
+  --surface-2: #323232;
+  --card: #2b2b2b;
+  --card-foreground: #f5f5f5;
+  --popover: #2f2f2f;
+  --popover-foreground: #f5f5f5;
+
+  --primary: #4cc2ff;
+  --primary-foreground: #00243d;
+  --secondary: #383838;
+  --secondary-foreground: #f0f0f0;
+
+  --muted: #383838;
+  --muted-foreground: #b6b6bd;
+  --accent: #2c3a47;
+  --accent-foreground: #cfe9ff;
+
+  --destructive: #ff99a4;
+  --destructive-foreground: #2b0a0d;
+
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: #4cc2ff;
+
+  --success: #6ccb5f;
+  --warning: #fce100;
+  --info: #4cc2ff;
+
+  --period-morning: #e0a33c;
+  --period-afternoon: #46c2d0;
+  --period-evening: #8b8bf0;
+
+  --chart-1: #4cc2ff;
+  --chart-2: #46c2d0;
+  --chart-3: #e0a33c;
+  --chart-4: #6ccb5f;
+  --chart-5: #ff99a4;
+
+  --sidebar: #262626;
+  --sidebar-foreground: #f0f0f0;
+  --sidebar-primary: #4cc2ff;
+  --sidebar-primary-foreground: #00243d;
+  --sidebar-accent: #2f3f4d;
+  --sidebar-accent-foreground: #cfe9ff;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #4cc2ff;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 6px -2px rgba(0, 0, 0, 0.35);
+  --shadow-float: 0 8px 24px -8px rgba(0, 0, 0, 0.6), 0 2px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 24px 56px -20px rgba(0, 0, 0, 0.7), 0 8px 20px -10px rgba(0, 0, 0, 0.5);
+
+  --card-border-color: rgba(255, 255, 255, 0.08);
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 6px -2px rgba(0, 0, 0, 0.3);
+  --nav-active-bg: #2f3f4d;
+  --nav-active-color: #cfe9ff;
+}
+
+/* 云母：侧栏与顶栏用半透明材质 */
+[data-theme='fluent'] aside {
+  background-color: color-mix(in srgb, var(--sidebar) 78%, transparent);
+  backdrop-filter: blur(30px) saturate(140%);
+  -webkit-backdrop-filter: blur(30px) saturate(140%);
+}
+
+/* WinUI 的按钮：底部有一道更深的边，按下时整体下沉 */
+[data-theme='fluent'] button:not([data-no-fluent]):not(:disabled) {
+  box-shadow: 0 1px 0 var(--border-strong);
+}
+[data-theme='fluent'] button:active:not(:disabled) {
+  transform: translateY(0.5px);
+  box-shadow: none;
+}
+
+/* 弹窗：云母面板 + 细描边 */
+[data-theme='fluent'] [role='dialog'],
+[data-theme='fluent'] [role='menu'],
+[data-theme='fluent'] [data-slot='select-content'] {
+  background-color: color-mix(in srgb, var(--popover) 92%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+}
+
+/* 选中态用左侧短条，符合 WinUI 的指示器语言 */
+[data-theme='fluent'] aside a[aria-current='page']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  translate: 0 -50%;
+  width: 3px;
+  height: 16px;
+  border-radius: 999px;
+  background-color: var(--primary);
+}

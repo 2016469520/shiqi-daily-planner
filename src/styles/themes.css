@@ -1,0 +1,320 @@
+﻿/* ============================================================
+   主题层（themes.css）
+   ------------------------------------------------------------
+   职责：把「主题」与「个性化」翻译成真实视觉，只改外观，不动布局与业务。
+
+   约定：
+   - 每套主题在 theme-<id>.css 里提供调色板 + 结构变量 + 少量专属规则
+   - 用户个性化通过 <html> 内联变量覆盖（优先级高于本文件）
+   - 本文件的规则不加 @layer，以便压过 globals.css 里 @layer utilities 的默认值
+
+   主题可用的结构变量：
+     --heading-font / --heading-weight / --heading-tracking / --heading-transform
+     --card-border-w / --card-border-color / --card-shadow / --card-inset
+     --btn-shadow / --btn-active-translate
+     --nav-active-bg / --nav-active-color / --nav-active-bar
+     --deco-image / --deco-size / --deco-opacity
+     --focus-ring-w / --focus-ring-color
+     --input-bg / --input-border-w
+   ============================================================ */
+
+@import './theme-fluent.css';
+@import './theme-anime.css';
+@import './theme-cyber.css';
+@import './theme-minimal.css';
+@import './theme-pixel.css';
+@import './theme-bento.css';
+@import './atmosphere.css';
+
+/* ------------------------------------------------------------
+   1. 类型阶梯：正文与标题各有一个倍率，用户可按需放大
+   数值与 globals.css 的六档保持一致，这里只多了倍率
+   ------------------------------------------------------------ */
+.text-display {
+  font-size: calc(1.75rem * var(--title-scale, 1));
+  line-height: calc(2.05rem * var(--title-scale, 1));
+}
+.text-title {
+  font-size: calc(1.25rem * var(--title-scale, 1));
+  line-height: calc(1.75rem * var(--title-scale, 1));
+}
+.text-section {
+  font-size: calc(0.9375rem * var(--type-scale, 1));
+  line-height: calc(1.375rem * var(--type-scale, 1));
+}
+.text-body {
+  font-size: calc(0.875rem * var(--type-scale, 1));
+  line-height: calc(1.375rem * var(--type-scale, 1));
+}
+.text-caption {
+  font-size: calc(0.75rem * var(--type-scale, 1));
+  line-height: calc(1.125rem * var(--type-scale, 1));
+}
+.text-micro {
+  font-size: calc(0.6875rem * var(--type-scale, 1));
+  line-height: calc(1rem * var(--type-scale, 1));
+}
+
+/* ------------------------------------------------------------
+   2. 标题族：主题可通过变量改变字形、字重、字距、大小写
+   ------------------------------------------------------------ */
+h1,
+h2,
+h3,
+.text-display,
+.text-title,
+.text-section {
+  font-family: var(--heading-font, var(--font-heading, var(--font-sans)));
+  font-weight: var(--heading-weight, 600);
+  letter-spacing: var(--heading-tracking, -0.011em);
+  text-transform: var(--heading-transform, none);
+}
+
+/* ------------------------------------------------------------
+   3. 卡片：宽度/描边/阴影由主题定义，圆角由个性化变量定义
+   ------------------------------------------------------------ */
+.surface {
+  border-width: var(--card-border-w, 1px);
+  border-style: solid;
+  border-color: var(--card-border-color, var(--border));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow, var(--shadow-card));
+}
+.surface-2 {
+  border-width: var(--card-border-w, 1px);
+  border-style: solid;
+  border-color: var(--card-border-color, var(--border));
+  border-radius: var(--radius-lg);
+}
+.surface-interactive {
+  transition:
+    border-color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard);
+}
+/* 主题可给卡片加一层内高光（如 bento 的顶部微光） */
+.surface::after,
+.surface-2::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: var(--card-inset, none);
+  opacity: var(--card-inset-opacity, 0);
+}
+.surface,
+.surface-2 {
+  position: relative;
+  background-image: var(--card-bg-image, none);
+}
+
+/* ------------------------------------------------------------
+   4. 半径工具类重映射
+   ------------------------------------------------------------
+   globals.css 用了 `@theme inline`，Tailwind 会把 rounded-md 之类编译成
+   字面量（8px），运行时改 --radius-* 对它们无效。这里把圆角工具类改成
+   引用变量，用户拖动圆角滑杆才能真正影响按钮/输入框/弹窗。
+   `rounded-full` 保持胶囊语义，不参与。
+   ------------------------------------------------------------ */
+.rounded-sm {
+  border-radius: var(--radius-sm, 6px);
+}
+.rounded-md {
+  border-radius: var(--radius-md, 8px);
+}
+.rounded-lg {
+  border-radius: var(--radius-lg, 12px);
+}
+.rounded-xl {
+  border-radius: var(--radius-xl, 16px);
+}
+.rounded-2xl {
+  border-radius: var(--radius-2xl, 20px);
+}
+.rounded-3xl {
+  border-radius: var(--radius-3xl, 24px);
+}
+.rounded-4xl {
+  border-radius: var(--radius-4xl, 32px);
+}
+.rounded-t-md,
+.rounded-t-lg,
+.rounded-t-xl {
+  border-top-left-radius: var(--radius-lg, 12px);
+  border-top-right-radius: var(--radius-lg, 12px);
+}
+.rounded-b-md,
+.rounded-b-lg,
+.rounded-b-xl {
+  border-bottom-left-radius: var(--radius-lg, 12px);
+  border-bottom-right-radius: var(--radius-lg, 12px);
+}
+.rounded-l-md,
+.rounded-l-lg,
+.rounded-l-xl {
+  border-top-left-radius: var(--radius-lg, 12px);
+  border-bottom-left-radius: var(--radius-lg, 12px);
+}
+.rounded-r-md,
+.rounded-r-lg,
+.rounded-r-xl {
+  border-top-right-radius: var(--radius-lg, 12px);
+  border-bottom-right-radius: var(--radius-lg, 12px);
+}
+.rounded-tl-lg,
+.rounded-tl-xl {
+  border-top-left-radius: var(--radius-lg, 12px);
+}
+.rounded-tr-lg,
+.rounded-tr-xl {
+  border-top-right-radius: var(--radius-lg, 12px);
+}
+.rounded-bl-lg,
+.rounded-bl-xl {
+  border-bottom-left-radius: var(--radius-lg, 12px);
+}
+.rounded-br-lg,
+.rounded-br-xl {
+  border-bottom-right-radius: var(--radius-lg, 12px);
+}
+
+/* ------------------------------------------------------------
+   5. 输入类控件：允许主题换底与描边粗细
+   ------------------------------------------------------------ */
+input:not([type='checkbox']):not([type='radio']),
+textarea,
+select {
+  background-color: var(--input-bg, transparent);
+  border-radius: var(--radius-input, var(--radius-md));
+}
+
+/* 焦点环宽度可配 */
+:focus-visible {
+  outline-width: var(--focus-ring-w, 2px);
+}
+
+/* ------------------------------------------------------------
+   5. 导航：主题决定选中态的样子
+   ------------------------------------------------------------ */
+[data-theme] aside a[aria-current='page'],
+[data-theme] aside a[data-active='true'] {
+  background-color: var(--nav-active-bg, var(--accent));
+  color: var(--nav-active-color, var(--accent-foreground));
+}
+
+/* ------------------------------------------------------------
+   6. 装饰底纹：画在 body 画布上，所有页面自动继承
+   ------------------------------------------------------------ */
+body {
+  background-image: var(--deco-image, none);
+  background-size: var(--deco-size, auto);
+  background-attachment: fixed;
+  background-repeat: repeat;
+}
+
+/* ------------------------------------------------------------
+   7. 动效强度
+   - 关闭：不做过渡/动画，但保留颜色与边框的状态差异
+   - 高：额外的位移与装饰呼吸
+   ------------------------------------------------------------ */
+[data-motion='off'] *,
+[data-motion='off'] *::before,
+[data-motion='off'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+[data-motion='off'] .ui-transition,
+[data-motion='off'] .surface-interactive {
+  transition: none !important;
+}
+
+[data-motion='high'] .surface-interactive:hover {
+  transform: translateY(-2px);
+}
+[data-motion='high'] .ui-transition:hover {
+  transition-duration: var(--motion-fast);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   8. 品牌装饰（.acg-*）的主题适配
+   ------------------------------------------------------------
+   专注卡的紫青渐变是「云母 / 樱色」的品牌语言；在极简、像素、霓虹、
+   暗格这四套主题里会显得像外来贴纸，因此退化成中性描边与纯色底。
+   ------------------------------------------------------------ */
+[data-theme='minimal'] .acg-frame,
+[data-theme='pixel'] .acg-frame,
+[data-theme='cyber'] .acg-frame,
+[data-theme='bento'] .acg-frame {
+  background-image: none;
+  background-color: var(--card-border-color, var(--border));
+  padding: var(--card-border-w, 1px);
+  /* acg-frame 在 globals 里写死了 16px，这里跟随主题圆角 */
+  border-radius: var(--radius-xl);
+}
+
+[data-theme='minimal'] .acg-surface,
+[data-theme='pixel'] .acg-surface,
+[data-theme='cyber'] .acg-surface,
+[data-theme='bento'] .acg-surface {
+  background-image: none;
+  background-color: var(--card);
+}
+
+/* 像素主题不要柔光，用实心描边表达强调 */
+[data-theme='pixel'] .acg-ring-glow {
+  filter: none;
+}
+[data-theme='pixel'] .acg-pill {
+  border-radius: 0;
+}
+
+/* 极简主题不要呼吸/漂浮这类装饰动画 */
+[data-theme='minimal'] .acg-breathe,
+[data-theme='minimal'] .acg-float,
+[data-theme='minimal'] .acg-ring-glow {
+  animation: none;
+  filter: none;
+}
+
+/* 主题预览卡：设置页里的小尺寸真实预览
+   （用 data-theme 复用同一套变量，因此预览与实机一致） */
+.theme-preview {
+  background-color: var(--background);
+  color: var(--foreground);
+  border-radius: calc(var(--radius-lg) * 0.75);
+  overflow: hidden;
+  isolation: isolate;
+}
+.theme-preview .tp-surface {
+  background-color: var(--card);
+  border: var(--card-border-w, 1px) solid var(--card-border-color, var(--border));
+  border-radius: var(--radius-md);
+  box-shadow: var(--card-shadow, var(--shadow-card));
+}
+.theme-preview .tp-accent {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: var(--radius-sm);
+}
+.theme-preview .tp-soft {
+  background-color: color-mix(in srgb, var(--primary) 16%, transparent);
+}
+.theme-preview .tp-muted {
+  background-color: var(--muted-foreground);
+  opacity: 0.55;
+}

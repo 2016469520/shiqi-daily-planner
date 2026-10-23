@@ -1,0 +1,198 @@
+/* ============================================================
+   Theme 04 · 留白 Minimal（Apple / Linear 取向）
+   ------------------------------------------------------------
+   特征：几乎不画边框和投影，靠留白、字重与精确对齐分层；
+   强调色是近乎黑的墨色，唯一的颜色留给状态。
+   ============================================================ */
+
+[data-theme='minimal'] {
+  --background: #fbfbfa;
+  --foreground: #101012;
+
+  --surface: #ffffff;
+  --surface-2: #f6f6f5;
+  --card: #ffffff;
+  --card-foreground: #101012;
+  --popover: #ffffff;
+  --popover-foreground: #101012;
+
+  --primary: #17171a;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f1ef;
+  --secondary-foreground: #2a2a2e;
+
+  --muted: #f4f4f2;
+  --muted-foreground: #6b6b70;
+  --accent: #f1f1ef;
+  --accent-foreground: #1a1a1d;
+
+  --destructive: #d1453b;
+  --destructive-foreground: #ffffff;
+
+  --border: #ebebe8;
+  --border-strong: #d9d9d4;
+  --input: #e4e4e0;
+  --ring: #17171a;
+
+  --success: #2f7d4f;
+  --warning: #9a6b16;
+  --info: #3b6ea8;
+
+  --period-morning: #b8873c;
+  --period-afternoon: #4b7f8c;
+  --period-evening: #5d5d78;
+
+  --chart-1: #17171a;
+  --chart-2: #4b7f8c;
+  --chart-3: #b8873c;
+  --chart-4: #2f7d4f;
+  --chart-5: #d1453b;
+
+  --sidebar: #fbfbfa;
+  --sidebar-foreground: #2a2a2e;
+  --sidebar-primary: #17171a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f1ef;
+  --sidebar-accent-foreground: #1a1a1d;
+  --sidebar-border: #ebebe8;
+  --sidebar-ring: #17171a;
+
+  --shadow-card: none;
+  --shadow-float: 0 2px 8px rgba(16, 16, 20, 0.06);
+  --shadow-pop: 0 20px 48px -24px rgba(16, 16, 20, 0.28), 0 4px 12px -6px rgba(16, 16, 20, 0.1);
+
+  --radius: 10px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --radius-3xl: 22px;
+  --radius-4xl: 28px;
+  --radius-input: 6px;
+
+  --heading-font: ui-sans-serif, -apple-system, 'Segoe UI Variable Display', 'Inter', system-ui,
+    'Microsoft YaHei UI', sans-serif;
+  --heading-weight: 600;
+  --heading-tracking: -0.024em;
+  --heading-transform: none;
+
+  --card-border-w: 1px;
+  --card-border-color: transparent;
+  --card-shadow: none;
+  --card-inset-opacity: 0;
+
+  --nav-active-bg: #f1f1ef;
+  --nav-active-color: #101012;
+
+  --deco-image: none;
+  --focus-ring-w: 2px;
+
+  --motion-fast: 160ms;
+  --motion-base: 220ms;
+  --motion-slow: 300ms;
+  --ease-standard: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+[data-theme='minimal'].dark {
+  --background: #0b0b0d;
+  --foreground: #f4f4f5;
+
+  --surface: #141417;
+  --surface-2: #1a1a1e;
+  --card: #141417;
+  --card-foreground: #f4f4f5;
+  --popover: #17171b;
+  --popover-foreground: #f4f4f5;
+
+  --primary: #f4f4f5;
+  --primary-foreground: #0b0b0d;
+  --secondary: #1d1d21;
+  --secondary-foreground: #e8e8ea;
+
+  --muted: #1d1d21;
+  --muted-foreground: #a1a1a8;
+  --accent: #1d1d21;
+  --accent-foreground: #f4f4f5;
+
+  --destructive: #f87171;
+  --destructive-foreground: #1a0a0a;
+
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #f4f4f5;
+
+  --success: #6ee7a8;
+  --warning: #f0c46b;
+  --info: #93c5fd;
+
+  --period-morning: #d6a35c;
+  --period-afternoon: #7fb2c0;
+  --period-evening: #9a9ab8;
+
+  --chart-1: #f4f4f5;
+  --chart-2: #7fb2c0;
+  --chart-3: #d6a35c;
+  --chart-4: #6ee7a8;
+  --chart-5: #f87171;
+
+  --sidebar: #0e0e11;
+  --sidebar-foreground: #e8e8ea;
+  --sidebar-primary: #f4f4f5;
+  --sidebar-primary-foreground: #0b0b0d;
+  --sidebar-accent: #1d1d21;
+  --sidebar-accent-foreground: #f4f4f5;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-ring: #f4f4f5;
+
+  --shadow-card: none;
+  --shadow-float: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --shadow-pop: 0 24px 56px -24px rgba(0, 0, 0, 0.8), 0 4px 14px -8px rgba(0, 0, 0, 0.5);
+
+  --card-border-color: transparent;
+  --card-shadow: none;
+  --nav-active-bg: #1d1d21;
+  --nav-active-color: #f4f4f5;
+}
+
+/* 留白：卡片用极淡的底而不是描边（深色模式下再退一步，只靠底色） */
+[data-theme='minimal'] .surface,
+[data-theme='minimal'] .surface-2 {
+  border-color: transparent;
+  box-shadow: none;
+}
+[data-theme='minimal'] .surface {
+  background-color: var(--card);
+}
+[data-theme='minimal'].dark .surface {
+  background-color: var(--card);
+}
+
+/* 侧栏：无背景、无分隔线，只用一条极淡的竖向分界 */
+[data-theme='minimal'] aside {
+  background-color: transparent;
+  border-right-color: var(--border);
+}
+[data-theme='minimal'] aside a {
+  border-radius: var(--radius-md);
+}
+[data-theme='minimal'] aside a[aria-current='page'] {
+  font-weight: 600;
+}
+
+/* 按钮：主按钮是纯墨块，次按钮没有边框 */
+[data-theme='minimal'] [data-slot='button'] {
+  box-shadow: none;
+}
+
+/* 弹窗：靠投影而不是描边 */
+[data-theme='minimal'] [role='dialog'] {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-pop);
+}
+
+/* 表头/分区的字号收紧一点，形成"编辑排版"的秩序感 */
+[data-theme='minimal'] h1 {
+  letter-spacing: -0.03em;
+}

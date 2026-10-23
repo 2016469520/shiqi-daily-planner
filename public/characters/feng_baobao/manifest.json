@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "version": 1,
+  "id": "feng_baobao",
+  "name": "冯宝宝",
+  "name_en": "Feng Baobao",
+  "series": "一人之下",
+  "tags": ["宝儿姐", "黑长直", "菜刀", "国漫"],
+  "description": "一人之下的女主角，表情极少，手里常拎一把菜刀。六态透明立绘：待机、开心、思考、工作、出错、困倦。",
+  "available_expressions_notes": "expressions/ 里是 9 张原始表情，poses/ 里是 13 张动作参考；运行时只使用根目录的 6 张状态图。",
+  "preferred_theme": "minimal",
+  "preferred_accent": "#3f7a6a",
+  "preferred_background": "minimal-lake",
+  "dialogue": {
+    "idle": ["看啥看？", "天真无邪的我"],
+    "happy": ["哦哦哦～"],
+    "thinking": ["认真思考中", "啥呢？", "？？？？？"],
+    "working": ["先做眼前这件事。"],
+    "error": ["这回弄错了……"],
+    "sleepy": ["乖乖睡吧"]
+  },
+  "redistribution_allowed": true,
+  "rights": {
+    "character": "冯宝宝 / 《一人之下》— 著作权归原作者米二及权利方所有",
+    "assets": "本地二次处理的同人向裁切图，非官方素材；仅用于个人非商业用途",
+    "note": "权利方如要求下架，删除本目录后重新生成 index.json 即可"
+  }
+}

@@ -1,0 +1,491 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   时格 · 设计令牌
+   风格：Bento Timeline —— 模块化布局 + 时间色（上午/下午/晚上）
+   原则：层级靠底色与留白，不靠堆叠边框；阴影只留给浮层
+   ============================================================ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border-strong: var(--border-strong);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* 时段语义色 */
+  --color-period-morning: var(--period-morning);
+  --color-period-afternoon: var(--period-afternoon);
+  --color-period-evening: var(--period-evening);
+
+  /* 状态色 */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  /* 圆角：四档，禁止再用其他值 */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
+}
+
+:root {
+  /* 底色：极轻的紫灰，避免纯白的"纸片感"，也避免彩色背景干扰 */
+  --background: oklch(0.984 0.004 285);
+  --foreground: oklch(0.235 0.02 285);
+
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.968 0.006 285);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.235 0.02 285);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.235 0.02 285);
+
+  /* 强调色：靛紫，一个就够 */
+  --primary: oklch(0.545 0.185 285);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.962 0.008 285);
+  --secondary-foreground: oklch(0.3 0.02 285);
+
+  --muted: oklch(0.962 0.008 285);
+  --muted-foreground: oklch(0.52 0.018 285);
+  --accent: oklch(0.955 0.014 285);
+  --accent-foreground: oklch(0.3 0.03 285);
+
+  --destructive: oklch(0.585 0.21 25);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --border: oklch(0.918 0.008 285);
+  --border-strong: oklch(0.865 0.012 285);
+  --input: oklch(0.9 0.01 285);
+  --ring: oklch(0.62 0.16 285);
+
+  --success: oklch(0.63 0.15 155);
+  --warning: oklch(0.75 0.15 78);
+  --info: oklch(0.64 0.13 235);
+
+  /* 时段色：晨光琥珀 / 午后青 / 暮色靛 */
+  --period-morning: oklch(0.76 0.15 76);
+  --period-afternoon: oklch(0.7 0.12 200);
+  --period-evening: oklch(0.58 0.16 288);
+
+  --chart-1: oklch(0.62 0.16 285);
+  --chart-2: oklch(0.7 0.12 200);
+  --chart-3: oklch(0.76 0.15 76);
+  --chart-4: oklch(0.63 0.15 155);
+  --chart-5: oklch(0.585 0.21 25);
+
+  --radius: 12px;
+
+  --sidebar: oklch(0.975 0.005 285);
+  --sidebar-foreground: oklch(0.3 0.02 285);
+  --sidebar-primary: oklch(0.545 0.185 285);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.955 0.014 285);
+  --sidebar-accent-foreground: oklch(0.3 0.03 285);
+  --sidebar-border: oklch(0.918 0.008 285);
+  --sidebar-ring: oklch(0.62 0.16 285);
+
+  /* 阴影：卡片极浅，浮层明确 */
+  --shadow-card: 0 1px 2px oklch(0.24 0.02 285 / 0.04), 0 1px 3px oklch(0.24 0.02 285 / 0.06);
+  --shadow-float: 0 14px 34px -14px oklch(0.3 0.06 285 / 0.28), 0 4px 12px -6px oklch(0.3 0.06 285 / 0.12);
+  --shadow-pop: 0 24px 56px -24px oklch(0.3 0.08 285 / 0.35), 0 8px 20px -10px oklch(0.3 0.06 285 / 0.16);
+
+  /* 动效 */
+  --motion-fast: 140ms;
+  --motion-base: 200ms;
+  --motion-slow: 280ms;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dark {
+  --background: oklch(0.166 0.012 285);
+  --foreground: oklch(0.965 0.004 285);
+
+  --surface: oklch(0.205 0.014 285);
+  --surface-2: oklch(0.238 0.016 285);
+
+  --card: oklch(0.205 0.014 285);
+  --card-foreground: oklch(0.965 0.004 285);
+  --popover: oklch(0.225 0.015 285);
+  --popover-foreground: oklch(0.965 0.004 285);
+
+  --primary: oklch(0.72 0.15 288);
+  --primary-foreground: oklch(0.19 0.02 285);
+  --secondary: oklch(0.262 0.016 285);
+  --secondary-foreground: oklch(0.94 0.004 285);
+
+  --muted: oklch(0.262 0.016 285);
+  --muted-foreground: oklch(0.72 0.014 285);
+  --accent: oklch(0.275 0.022 285);
+  --accent-foreground: oklch(0.95 0.004 285);
+
+  --destructive: oklch(0.68 0.19 25);
+  --destructive-foreground: oklch(0.15 0.02 25);
+
+  --border: oklch(1 0 0 / 9%);
+  --border-strong: oklch(1 0 0 / 16%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.72 0.15 288);
+
+  --success: oklch(0.76 0.14 158);
+  --warning: oklch(0.82 0.14 82);
+  --info: oklch(0.75 0.11 235);
+
+  --period-morning: oklch(0.82 0.13 80);
+  --period-afternoon: oklch(0.78 0.1 200);
+  --period-evening: oklch(0.72 0.14 290);
+
+  --chart-1: oklch(0.72 0.15 288);
+  --chart-2: oklch(0.78 0.1 200);
+  --chart-3: oklch(0.82 0.13 80);
+  --chart-4: oklch(0.76 0.14 158);
+  --chart-5: oklch(0.68 0.19 25);
+
+  --sidebar: oklch(0.188 0.012 285);
+  --sidebar-foreground: oklch(0.9 0.006 285);
+  --sidebar-primary: oklch(0.72 0.15 288);
+  --sidebar-primary-foreground: oklch(0.19 0.02 285);
+  --sidebar-accent: oklch(0.262 0.018 285);
+  --sidebar-accent-foreground: oklch(0.95 0.004 285);
+  --sidebar-border: oklch(1 0 0 / 9%);
+  --sidebar-ring: oklch(0.72 0.15 288);
+
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.24), 0 1px 3px oklch(0 0 0 / 0.28);
+  --shadow-float: 0 14px 34px -14px oklch(0 0 0 / 0.55), 0 4px 12px -6px oklch(0 0 0 / 0.35);
+  --shadow-pop: 0 24px 56px -24px oklch(0 0 0 / 0.65), 0 8px 20px -10px oklch(0 0 0 / 0.4);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: 'cv01' 1, 'cv03' 1, 'cv04' 1;
+    text-rendering: optimizeLegibility;
+  }
+  /* 数字统一等宽，避免统计跳动 */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+  /* 焦点环统一 */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Hide native number input spinners */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+/* ============================================================
+   排版阶梯（只用这六档）
+   ============================================================ */
+@layer utilities {
+  .text-display {
+    font-size: 1.75rem;
+    line-height: 2rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+  .text-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .text-section {
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    font-weight: 600;
+  }
+  .text-body {
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+  }
+  .text-caption {
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+  }
+  .text-micro {
+    font-size: 0.6875rem;
+    line-height: 1rem;
+    letter-spacing: 0.01em;
+  }
+}
+
+/* ============================================================
+   表面与层级
+   ============================================================ */
+@layer utilities {
+  /* 卡片：1px 描边 + 极浅阴影，hover 时描边加深 */
+  .surface {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+  .surface-2 {
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+  .surface-interactive {
+    transition:
+      border-color var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard),
+      transform var(--motion-fast) var(--ease-standard);
+  }
+  .surface-interactive:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-float);
+  }
+  .surface-interactive:active {
+    transform: translateY(0.5px);
+  }
+
+  /* 浮层：弹窗 / 抽屉 / 下拉 */
+  .elevated {
+    box-shadow: var(--shadow-pop);
+  }
+
+  /* 统一的交互过渡 */
+  .ui-transition {
+    transition:
+      color var(--motion-fast) var(--ease-standard),
+      background-color var(--motion-fast) var(--ease-standard),
+      border-color var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard),
+      opacity var(--motion-fast) var(--ease-standard);
+  }
+}
+
+/* ============================================================
+   时段语义色（上午 / 下午 / 晚上）
+   用法：<span class="p-morning period-dot" /> 或 period-chip / period-bar
+   ============================================================ */
+@layer utilities {
+  .p-morning {
+    --period: var(--period-morning);
+  }
+  .p-afternoon {
+    --period: var(--period-afternoon);
+  }
+  .p-evening {
+    --period: var(--period-evening);
+  }
+
+  .period-dot {
+    background-color: var(--period);
+  }
+
+  .period-chip {
+    background-color: color-mix(in oklab, var(--period) 14%, transparent);
+    color: color-mix(in oklab, var(--period) 72%, var(--foreground));
+    border: 1px solid color-mix(in oklab, var(--period) 30%, transparent);
+  }
+  .dark .period-chip {
+    background-color: color-mix(in oklab, var(--period) 18%, transparent);
+    color: color-mix(in oklab, var(--period) 60%, var(--foreground));
+    border-color: color-mix(in oklab, var(--period) 34%, transparent);
+  }
+
+  .period-bar {
+    background-image: linear-gradient(
+      90deg,
+      var(--period),
+      color-mix(in oklab, var(--period) 55%, transparent)
+    );
+  }
+
+  .period-rail {
+    border-left: 2px solid color-mix(in oklab, var(--period) 55%, transparent);
+  }
+}
+
+/* ============================================================
+   动效
+   ============================================================ */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fade-up var(--motion-slow) var(--ease-standard) both;
+  }
+  .animate-soft-pulse {
+    animation: soft-pulse 2.6s ease-in-out infinite;
+  }
+  .animate-float {
+    animation: float-y 4s ease-in-out infinite;
+  }
+}
+
+/* 尊重系统的减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   桌面浮窗（Electron 无边框窗口）
+   ============================================================ */
+html.widget-window,
+html.widget-window body {
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+/* 可拖动区域：无边框窗口靠它移动 */
+.app-drag {
+  -webkit-app-region: drag;
+}
+
+.app-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* ============================================================
+   专注区的柔光（收敛版：只用于专注与浮窗，不再外扩）
+   ============================================================ */
+.acg-breathe {
+  animation: soft-pulse 2.6s ease-in-out infinite;
+}
+
+.acg-float {
+  animation: float-y 4s ease-in-out infinite;
+}
+
+.acg-ring-glow {
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--primary) 45%, transparent));
+}
+
+.acg-surface {
+  background-image:
+    radial-gradient(120% 95% at 8% 0%, color-mix(in oklab, var(--period-evening) 14%, transparent), transparent 62%),
+    radial-gradient(115% 85% at 100% 6%, color-mix(in oklab, var(--period-afternoon) 12%, transparent), transparent 64%);
+}
+
+.dark .acg-surface {
+  background-image:
+    radial-gradient(120% 95% at 8% 0%, color-mix(in oklab, var(--period-evening) 20%, transparent), transparent 66%),
+    radial-gradient(115% 85% at 100% 6%, color-mix(in oklab, var(--period-afternoon) 14%, transparent), transparent 68%);
+}
+
+/* 渐变描边容器：外层 1px 渐变 + 内层卡片（仅专注卡与浮窗使用） */
+.acg-frame {
+  padding: 1px;
+  border-radius: 16px;
+  background-image: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--period-evening) 70%, transparent),
+    color-mix(in oklab, var(--primary) 35%, transparent),
+    color-mix(in oklab, var(--period-afternoon) 70%, transparent)
+  );
+}
+
+.acg-shadow {
+  box-shadow: var(--shadow-float);
+}
+
+.acg-pill {
+  border-radius: 9999px;
+  background-color: color-mix(in oklab, var(--primary) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--primary) 32%, transparent);
+  color: color-mix(in oklab, var(--primary) 82%, var(--foreground));
+}
