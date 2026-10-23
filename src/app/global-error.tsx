@@ -18,7 +18,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     // 方便用户反馈时截图/复制
-    console.error('[时格] 渲染出错：', error)
+    console.error('[时栖] 渲染出错：', error)
   }, [error])
 
   return (

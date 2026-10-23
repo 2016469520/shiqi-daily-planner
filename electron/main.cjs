@@ -13,7 +13,7 @@ const APP_HOST = 'local'
 const APP_ORIGIN = `${APP_SCHEME}://${APP_HOST}`
 const DIST_DIR = path.join(__dirname, '..', 'out')
 const DEV_URL = process.env.ELECTRON_START_URL || ''
-const APP_TITLE = '时格'
+const APP_TITLE = '时栖'
 
 const WIDGET_WIDTH = 340
 const WIDGET_HEIGHT = 460
@@ -537,7 +537,7 @@ if (!gotLock) {
   })
 
   app.whenReady().then(() => {
-    app.setAppUserModelId('app.local.plancalendar')
+    app.setAppUserModelId('app.shiqi.planner')
     registerProtocolHandler()
     registerIpc()
     buildMenu()

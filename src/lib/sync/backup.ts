@@ -17,7 +17,7 @@ import type {
   UserPreferences,
 } from '@/types'
 
-export const BACKUP_FORMAT = 'plan-calendar-backup'
+export const BACKUP_FORMAT = 'shiqi-backup'
 export const BACKUP_VERSION = 1
 
 /** 覆盖足够长时间，避免老数据漏掉 */
@@ -105,7 +105,7 @@ export async function createBackup(
     format: BACKUP_FORMAT,
     version: BACKUP_VERSION,
     exported_at: now.toISOString(),
-    app: '时格',
+    app: '时栖',
     data: {
       tasks,
       tags,

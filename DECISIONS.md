@@ -564,10 +564,10 @@
   - AGP 在 Windows 上默认拒绝含中文的项目路径，`android/gradle.properties` 里加了 `android.overridePathCheck=true`
   - 当前产出为 debug 签名，自己安装够用；对外分发应改用 `assembleRelease` + 自有签名
 
-## 决策 68：产品更名「时格」，内部标识保持不变 (2026-10-21)
-- **决策**: 产品名、窗口标题、安装名改为「时格」（英文 TimeGrid）；`appId`/`applicationId` 仍是 `app.local.plancalendar`，IndexedDB 库名 `my-plan-calendar-db` 不变
+## 决策 68：产品更名「时栖」，内部标识保持不变 (2026-10-21)
+- **决策**: 产品名、窗口标题、安装名改为「时栖」（英文 ShiQi）；`appId`/`applicationId` 仍是 `app.local.plancalendar`，IndexedDB 库名 `my-plan-calendar-db` 不变
 - **原因**:
-  - 名字要短、要能说明产品：一天被切成上午/下午/晚上三个时段格子，"时格"两字即产品模型
+  - 名字要短、要能说明产品：一天被切成上午/下午/晚上三个时段格子，"时栖"两字即产品模型
   - 安卓的 `applicationId` 一旦改变，系统会当成另一个应用安装，旧数据不会跟着升级
   - Electron 的用户数据目录取 `package.json` 的 `name`，未改动，因此桌面端数据目录也不变
 - **后果**: 已装旧版的用户升级后数据仍在；只有展示名和产物文件名变化
@@ -578,7 +578,7 @@
   - 浮窗的价值在于常驻；如果关主窗口就杀掉进程，浮窗谈不上"久驻桌面"
   - 侧栏式清单的惯例（微信、Telegram、Todoist 桌面版）都是关窗进托盘
 - **配套**:
-  - 托盘菜单提供「打开时格 / 显示或隐藏浮窗 / 浮窗置顶 / 退出」，保证总有退出口
+  - 托盘菜单提供「打开时栖 / 显示或隐藏浮窗 / 浮窗置顶 / 退出」，保证总有退出口
   - 浮窗默认置顶、`skipTaskbar`，位置尺寸与置顶状态都持久化
   - 两个窗口共享同一来源的 IndexedDB；用 BroadcastChannel 广播变更，接收方只失效相关 React Query 缓存，避免整页重取
 

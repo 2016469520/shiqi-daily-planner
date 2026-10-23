@@ -1,6 +1,6 @@
-appId: app.local.plancalendar
-productName: 时格
-copyright: 个人项目
+appId: app.shiqi.planner
+productName: 时栖
+copyright: Copyright (c) 2026 2016469520 (MIT License)
 
 directories:
   output: dist
@@ -27,12 +27,12 @@ win:
       arch:
         - x64
   icon: resources/icon.ico
-  artifactName: TimeGrid-${version}-portable.${ext}
+  artifactName: ShiQi-${version}-portable.${ext}
   requestedExecutionLevel: asInvoker
 
 portable:
-  artifactName: TimeGrid-${version}-portable.${ext}
-  unpackDirName: TimeGrid
+  artifactName: ShiQi-${version}-portable.${ext}
+  unpackDirName: ShiQi
 
 # 打包结果不参与签名（个人使用，无证书）
 forceCodeSigning: false

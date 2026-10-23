@@ -1,9 +1,9 @@
 {
-  "name": "my-plan-calendar",
-  "version": "0.9.3",
+  "name": "shiqi-daily-planner",
+  "version": "1.0.0",
   "private": true,
   "main": "electron/main.cjs",
-  "description": "时格 — 把一天分成上午/下午/晚上三个时段排计划，带桌面浮窗的本地日程应用",
+  "description": "时栖 ShiQi — 开源、本地优先的日程计划、习惯打卡与番茄钟（Windows / Android）",
   "author": "2016469520",
   "scripts": {
     "dev": "next dev",

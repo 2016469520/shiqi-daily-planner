@@ -1,9 +1,9 @@
 // ============================================================
 // 角色库：分类 / 推荐配色 / 本地素材包
 //
-// 当前内置角色只有 PIX（时格原创像素冒险者）。
+// 当前内置角色只有 PIX（时栖原创像素冒险者）。
 // 其余角色一律来自用户自己的本地素材包：
-//   %APPDATA%\my-plan-calendar\characters\<包名>\manifest.json + 图片
+//   %APPDATA%\时栖\characters\<包名>\manifest.json + 图片
 // 见 docs/ATMOSPHERE_PACKS.md。
 //
 // `artId` 为 null 表示"有推荐位但没有内置立绘"，只会出现在
@@ -16,7 +16,7 @@ import type { ThemeId } from './types'
 export type CharacterCategory = 'original' | 'custom'
 
 export const CATEGORY_LABELS: Record<CharacterCategory, string> = {
-  original: '时格原创',
+  original: '时栖原创',
   custom: '用户自定义',
 }
 
@@ -30,7 +30,7 @@ export interface CharacterRecommendation {
 export interface CharacterEntry {
   id: string
   name: string
-  /** 来源作品；原创角色填「时格」 */
+  /** 来源作品；原创角色填「时栖」 */
   work: string
   categories: CharacterCategory[]
   tags: string[]
@@ -48,7 +48,7 @@ export const CHARACTER_LIBRARY: CharacterEntry[] = [
   {
     id: 'pixel-pix',
     name: 'PIX',
-    work: '时格',
+    work: '时栖',
     categories: ['original'],
     tags: ['像素', '冒险者', '原创'],
     artId: 'pixel-pix',
@@ -134,7 +134,7 @@ export function figureOf(id: string | null | undefined): {
 
 /** 作品 → 系列主色（卡片装饰的视觉锚点） */
 export const SERIES_ACCENT: Record<string, string> = {
-  时格: '#d7263d',
+  时栖: '#d7263d',
 }
 
 export function seriesAccentOf(work: string): string {
@@ -150,7 +150,7 @@ export function isPackId(id: string | null | undefined): boolean {
 
 /** 一句话简介（详情页展示） */
 const DESCRIPTIONS: Record<string, string> = {
-  'pixel-pix': '时格的像素冒险者。把所有待办都当成主线任务。',
+  'pixel-pix': '时栖的像素冒险者。把所有待办都当成主线任务。',
 }
 
 export function descriptionOf(id: string | null | undefined): string | undefined {
@@ -161,5 +161,5 @@ export function descriptionOf(id: string | null | undefined): string | undefined
 export type SeriesKey = 'original' | 'custom'
 
 export function seriesKeyOf(work: string): SeriesKey {
-  return work === '时格' ? 'original' : 'custom'
+  return work === '时栖' ? 'original' : 'custom'
 }

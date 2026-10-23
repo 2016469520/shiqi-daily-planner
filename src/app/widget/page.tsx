@@ -226,7 +226,7 @@ export default function WidgetPage() {
       <div className="relative flex h-full w-full flex-col overflow-hidden bg-card ring-1 ring-inset ring-border">
         {/* 标题栏（可拖拽） */}
         <header className="app-drag flex h-11 shrink-0 items-center gap-2 border-b border-border bg-surface-2/50 px-3 select-none">
-          <span className="shrink-0 text-section">时格</span>
+          <span className="shrink-0 text-section">时栖</span>
           <span className="min-w-0 flex-1 truncate text-micro text-muted-foreground tabular-nums">
             {format(parseISO(today), 'M月d日')} {formatWeekday(today)}
           </span>

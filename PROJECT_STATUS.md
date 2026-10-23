@@ -255,7 +255,7 @@
 - 重写：`src/components/focus/focus-timer.tsx`、`src/app/widget/page.tsx`
 - 调整：`src/hooks/use-focus.ts`（extend + 广播）、`src/hooks/use-cross-window-sync.ts`、`src/lib/widget-sync.ts`、`src/components/ui/slider.tsx`、`src/app/globals.css`、`src/app/focus/page.tsx`、`package.json`（0.3.0）、README
 
-## 当前阶段：更名「时格」+ 桌面常驻浮窗 (2026-10-21)
+## 当前阶段：更名「时栖」+ 桌面常驻浮窗 (2026-10-21)
 
 ## 验证状态：2026-10-21（最新）
 
@@ -272,8 +272,8 @@
 ## 🔧 本次变更 (2026-10-21)
 
 ### 更名
-- 产品名由「我的计划日历」改为 **「时格」**（TimeGrid）：把一天切成上午/下午/晚上三个格子来安排
-- 同步更新：`APP_NAME`/`APP_DESCRIPTION`、PWA manifest、Electron 窗口标题与托盘提示、`productName` 与产物名（`TimeGrid-*`）、Capacitor appName、安卓 `strings.xml` 应用名、README
+- 产品名由「我的计划日历」改为 **「时栖」**（ShiQi）：把一天切成上午/下午/晚上三个格子来安排
+- 同步更新：`APP_NAME`/`APP_DESCRIPTION`、PWA manifest、Electron 窗口标题与托盘提示、`productName` 与产物名（`ShiQi-*`）、Capacitor appName、安卓 `strings.xml` 应用名、README
 - **`appId` / `applicationId` 保持不变**（`app.local.plancalendar`）：改了会被安卓当成新应用，旧数据无法升级
 - IndexedDB 数据库名未变，已装旧版的数据仍在
 
@@ -283,7 +283,7 @@
    - 第二个无边框窗口（`frame: false` + `transparent`）加载 `/widget/`，`alwaysOnTop` 默认开启，`skipTaskbar` 不占任务栏
    - 浮窗与主窗口的位置、尺寸、可见性、置顶状态分别持久化到 `window-state.json`
    - **关系变成托盘常驻**：关闭主窗口 = 收起，关闭浮窗 = 隐藏，应用仍在托盘；退出走托盘菜单或主菜单「文件 → 退出」
-   - 托盘图标（`electron/assets/app.ico`）菜单：打开时格 / 显示或隐藏浮窗 / 浮窗置顶 / 退出
+   - 托盘图标（`electron/assets/app.ico`）菜单：打开时栖 / 显示或隐藏浮窗 / 浮窗置顶 / 退出
 3. `electron/preload.cjs`：`contextBridge` 只暴露 6 个方法（隐藏浮窗、切换浮窗、开主窗口、切置顶、查置顶、退出），渲染进程无 Node 权限
 4. 跨窗口同步：`src/lib/widget-sync.ts` 用 BroadcastChannel 广播；IndexedDB 仓储层在任务写入后发通知，`useCrossWindowSync` 收到后只失效相关查询
 5. `AppShell` 对 `/widget` 路径跳过侧边栏、底部导航与登录跳转；`globals.css` 增加拖拽区（`-webkit-app-region`）与浮窗透明背景规则

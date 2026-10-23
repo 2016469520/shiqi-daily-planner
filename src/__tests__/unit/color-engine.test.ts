@@ -208,7 +208,7 @@ describe('角色库', () => {
 
   it('搜索能命中角色名与作品名', () => {
     expect(searchCharacters('PIX').some((c) => c.id === 'pixel-pix')).toBe(true)
-    expect(searchCharacters('时格').every((c) => c.work === '时格')).toBe(true)
+    expect(searchCharacters('时栖').every((c) => c.work === '时栖')).toBe(true)
     expect(searchCharacters('不存在的角色名').length).toBe(0)
   })
 

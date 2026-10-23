@@ -22,8 +22,8 @@ export {
 
 // ---------- App branding ----------
 
-export const APP_NAME = '时格'
-export const APP_SHORT_NAME = '时格'
+export const APP_NAME = '时栖'
+export const APP_SHORT_NAME = '时栖'
 export const APP_DESCRIPTION = '把一天分成上午 / 下午 / 晚上三个时段来排计划，顺手打卡习惯、写每日复盘'
 
 // ---------- Default tags ----------

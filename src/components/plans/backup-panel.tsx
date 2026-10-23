@@ -60,7 +60,7 @@ export function BackupPanel() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `plan-calendar-backup-${todayStr()}-${format(new Date(), 'HHmm')}.json`
+      a.download = `shiqi-backup-${todayStr()}-${format(new Date(), 'HHmm')}.json`
       document.body.appendChild(a)
       a.click()
       a.remove()

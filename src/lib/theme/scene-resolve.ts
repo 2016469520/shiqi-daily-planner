@@ -127,7 +127,7 @@ export function resolveCharacter(
     id: fallback.id,
     name: fallback.name,
     artId: fallback.id,
-    work: '时格',
+    work: '时栖',
     expressions: fallback.expressions,
   }
 }
