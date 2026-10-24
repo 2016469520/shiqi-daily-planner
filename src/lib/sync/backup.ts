@@ -20,6 +20,12 @@ import type {
 export const BACKUP_FORMAT = 'shiqi-backup'
 export const BACKUP_VERSION = 1
 
+/**
+ * 旧版「时格 TimeGrid」的备份格式标识。数据结构与现在完全一致，
+ * 导入时按兼容格式放行，让老用户能把旧备份直接搬进时栖。
+ */
+export const LEGACY_BACKUP_FORMATS = ['plan-calendar-backup']
+
 /** 覆盖足够长时间，避免老数据漏掉 */
 const FULL_RANGE_START = '1970-01-01'
 const FULL_RANGE_END = '2999-12-31'
@@ -138,7 +144,10 @@ export function countBackup(payload: BackupPayload): BackupStats {
 export function parseBackup(raw: unknown): BackupPayload {
   if (!raw || typeof raw !== 'object') throw new Error('备份内容不是对象')
   const obj = raw as Partial<BackupPayload>
-  if (obj.format !== BACKUP_FORMAT) throw new Error('不是本应用的备份文件')
+  const isKnownFormat =
+    obj.format === BACKUP_FORMAT ||
+    (typeof obj.format === 'string' && LEGACY_BACKUP_FORMATS.includes(obj.format))
+  if (!isKnownFormat) throw new Error('不是本应用的备份文件')
   if (typeof obj.version !== 'number' || obj.version > BACKUP_VERSION) {
     throw new Error('备份文件版本不受支持')
   }

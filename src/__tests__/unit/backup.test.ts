@@ -108,7 +108,18 @@ describe('完整备份 / 恢复', () => {
   it('拒绝非本应用的 JSON', () => {
     expect(() => parseBackup({ hello: 'world' })).toThrow(/不是本应用的备份文件/)
     expect(() => parseBackup(null)).toThrow(/不是对象/)
+    expect(() => parseBackup({ format: 'unknown-format', version: 1, data: {} })).toThrow(/不是本应用的备份文件/)
     expect(() => parseBackup({ format: BACKUP_FORMAT, version: 99, data: {} })).toThrow(/版本/)
+  })
+
+  it('兼容导入旧版「时格」格式的备份', async () => {
+    const payload = await createBackup(repos, SOURCE_USER)
+    const legacy = JSON.parse(JSON.stringify(payload)) as Record<string, unknown>
+    legacy.format = 'plan-calendar-backup'
+    legacy.app = '时格'
+    const parsed = parseBackup(legacy)
+    expect(parsed.format).toBe(BACKUP_FORMAT)
+    expect(countBackup(parsed)).toEqual(countBackup(payload))
   })
 
   it('恢复后目标用户拿到全部数据，且引用关系被重建', async () => {
