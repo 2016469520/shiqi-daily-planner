@@ -233,7 +233,7 @@ export default function WidgetPage() {
     )
   }
 
-  // 贴边停靠中：整窗缩成一条小边条，碰一下或点一下就弹回来
+  // 贴边停靠中：整窗缩成一条小边条；刚停靠有缓冲期，悬停不展开（点击任何时候都行）
   if (dock?.edge) {
     const vertical = dock.edge === 'left' || dock.edge === 'right'
     const Chevron =
@@ -248,7 +248,12 @@ export default function WidgetPage() {
         title="展开浮窗"
         aria-label="展开浮窗"
         onClick={() => bridge?.undockWidget().catch(() => {})}
-        onMouseEnter={() => bridge?.undockWidget().catch(() => {})}
+        onMouseEnter={() => {
+          // 刚停靠的 1.2 秒缓冲期内悬停不展开（松手时光标往往就落在小条上）
+          if (Date.now() - (dock.dockedAt ?? 0) > 1200) {
+            bridge?.undockWidget().catch(() => {})
+          }
+        }}
         className={cn(
           'flex h-screen w-full items-center justify-center gap-1.5 bg-primary text-primary-foreground ui-transition hover:brightness-110',
           vertical ? 'flex-col' : 'flex-row'

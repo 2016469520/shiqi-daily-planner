@@ -22,7 +22,9 @@ const PET_WIDTH = 280
 const PET_HEIGHT = 380
 
 // 贴边隐藏：浮窗拖到离屏幕边缘这么近时缩成小条
-const DOCK_THRESHOLD = 32
+const DOCK_THRESHOLD = 20
+// 停靠后的缓冲期：期间鼠标悬停在小条上不自动展开（刚松手时光标往往就在小条上）
+const DOCK_HOVER_GRACE_MS = 1200
 const DOCK_TAB_THICKNESS = 18
 const DOCK_TAB_LENGTH = 220
 
@@ -262,6 +264,8 @@ function createWidgetWindow() {
     if (tab) {
       win.setMinimumSize(1, 1)
       win.setBounds(tab)
+      // 启动恢复也给缓冲期，避免开机后鼠标恰好落在小条上立刻展开
+      saveState({ widget: { ...loadState().widget, dockedAt: Date.now() } })
     }
   }
 
@@ -308,9 +312,18 @@ function createWidgetWindow() {
 }
 
 function ensureWidgetVisible() {
-  // 停靠成小条时先展开回正常形态
-  if (loadState().widget.docked) undockWidget()
   if (!widgetWindow || widgetWindow.isDestroyed()) {
+    widgetWindow = createWidgetWindow()
+    return
+  }
+  // 已在屏幕上停靠成小条：它本身就是可见状态，不要强行展开
+  if (widgetWindow.isVisible() && loadState().widget.docked) {
+    saveState({ widget: { ...loadState().widget, visible: true } })
+    app.emit('widget-visibility-changed')
+    return
+  }
+  // 停靠但被隐藏：展开回正常形态再显示
+  if (loadState().widget.docked) undockWidget()
     widgetWindow = createWidgetWindow()
     return
   }
@@ -404,7 +417,11 @@ function nearestDockEdge(bounds) {
 
 function currentDockState() {
   const widget = loadState().widget
-  return { enabled: !!widget.dockEdgeEnabled, edge: widget.docked ?? null }
+  return {
+    enabled: !!widget.dockEdgeEnabled,
+    edge: widget.docked ?? null,
+    dockedAt: typeof widget.dockedAt === 'number' ? widget.dockedAt : null,
+  }
 }
 
 function notifyDockChanged() {
@@ -424,7 +441,7 @@ function dockWidget(edge) {
   if (!tab) return
   // 小条尺寸低于窗口最小限制，先放宽
   widgetWindow.setMinimumSize(1, 1)
-  saveState({ widget: { ...loadState().widget, docked: edge, dockBounds: bounds } })
+  saveState({ widget: { ...loadState().widget, docked: edge, dockedAt: Date.now(), dockBounds: bounds } })
   widgetWindow.setBounds(tab)
   notifyDockChanged()
 }
@@ -432,7 +449,7 @@ function dockWidget(edge) {
 function undockWidget() {
   const state = loadState()
   if (!state.widget.docked) return
-  saveState({ widget: { ...state.widget, docked: null, dockBounds: null } })
+  saveState({ widget: { ...state.widget, docked: null, dockedAt: null, dockBounds: null } })
   if (widgetWindow && !widgetWindow.isDestroyed()) {
     widgetWindow.setMinimumSize(280, 260)
     const restore = state.widget.dockBounds

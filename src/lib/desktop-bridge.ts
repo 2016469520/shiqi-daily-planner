@@ -46,6 +46,8 @@ export interface DesktopBridge {
 export interface DockState {
   enabled: boolean
   edge: 'left' | 'right' | 'top' | 'bottom' | null
+  /** 停靠发生的时间戳：给悬停展开留缓冲期，避免刚松手就误触发展开 */
+  dockedAt: number | null
 }
 
 interface BridgeWindow {
@@ -61,7 +63,7 @@ interface BridgeWindow {
  * 新能力（贴边隐藏 / 桌宠）按可选处理：旧版 preload 注入的 bridge 没有这些方法时，
  * 包装层给出安全空实现，页面不会因为缺方法而崩（e2e 里的 mock bridge 也是这种形态）。
  */
-const NO_DOCK: DockState = { enabled: false, edge: null }
+const NO_DOCK: DockState = { enabled: false, edge: null, dockedAt: null }
 
 let cachedBridge: DesktopBridge | null = null
 
