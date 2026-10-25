@@ -25,12 +25,12 @@ Plan your day in morning / afternoon / evening blocks — calendar, to-do list, 
 
 ## 📥 下载
 
-到 **[Releases](https://github.com/2016469520/shiqi-daily-planner/releases/latest)** 页面下载最新安装包（v1.1.0）：
+到 **[Releases](https://github.com/2016469520/shiqi-daily-planner/releases/latest)** 页面下载最新安装包（v1.1.1）：
 
 | 平台 | 文件 | 说明 |
 |---|---|---|
-| **Windows** | [`ShiQi-1.1.0-windows-portable.exe`](https://github.com/2016469520/shiqi-daily-planner/releases/download/v1.1.0/ShiQi-1.1.0-windows-portable.exe) | 便携版，双击即用；不写注册表、不需要管理员权限 |
-| **Android** | [`ShiQi-1.1.0-android.apk`](https://github.com/2016469520/shiqi-daily-planner/releases/download/v1.1.0/ShiQi-1.1.0-android.apk) | Android 7.0（API 24）及以上；首次安装需允许「安装未知来源应用」 |
+| **Windows** | [`ShiQi-1.1.1-windows-portable.exe`](https://github.com/2016469520/shiqi-daily-planner/releases/download/v1.1.1/ShiQi-1.1.1-windows-portable.exe) | 便携版，双击即用；不写注册表、不需要管理员权限 |
+| **Android** | [`ShiQi-1.1.1-android.apk`](https://github.com/2016469520/shiqi-daily-planner/releases/download/v1.1.1/ShiQi-1.1.1-android.apk) | Android 7.0（API 24）及以上；首次安装需允许「安装未知来源应用」 |
 
 > 两个版本都是**完全本地**运行：不依赖任何服务器，数据保存在本机应用数据库里，不需要注册账号、不需要联网。
 
@@ -92,7 +92,7 @@ Plan your day in morning / afternoon / evening blocks — calendar, to-do list, 
 
 ### Windows
 
-1. 下载 `ShiQi-1.1.0-windows-portable.exe`，双击直接打开，无需安装。
+1. 下载 `ShiQi-1.1.1-windows-portable.exe`，双击直接打开，无需安装。
 2. 关闭主窗口只是收起到系统托盘（右下角），浮窗保留；**完全退出**请用托盘图标右键菜单的「退出」。
 3. 启动后会出现主窗口 + 右下角桌面浮窗两个窗口：
    - 浮窗有「清单 / 专注」两个标签页，可以直接勾选完成、添加事项、开番茄钟；
@@ -103,7 +103,7 @@ Plan your day in morning / afternoon / evening blocks — calendar, to-do list, 
 
 ### Android
 
-1. 下载 `ShiQi-1.1.0-android.apk` 传到手机，点击安装（微信 / QQ 传文件时选择「用其他应用打开」→ 安装包）。
+1. 下载 `ShiQi-1.1.1-android.apk` 传到手机，点击安装（微信 / QQ 传文件时选择「用其他应用打开」→ 安装包）。
 2. 首次安装需允许「安装未知来源应用」。
 3. 数据保存在应用本地；换手机前同样先在 设置 → 数据 里导出备份 JSON，再到新手机导入。
 
@@ -122,14 +122,14 @@ Plan your day in morning / afternoon / evening blocks — calendar, to-do list, 
 
 ### Windows
 
-1. Download `ShiQi-1.1.0-windows-portable.exe` from [Releases](https://github.com/2016469520/shiqi-daily-planner/releases/latest) and double-click to run — it's a portable app (no installer, no registry changes, no admin rights).
+1. Download `ShiQi-1.1.1-windows-portable.exe` from [Releases](https://github.com/2016469520/shiqi-daily-planner/releases/latest) and double-click to run — it's a portable app (no installer, no registry changes, no admin rights).
 2. Closing the main window minimizes it to the system tray and keeps the desktop widget; use the tray icon's **Exit** to fully quit.
 3. Two windows open on launch: the main app plus an always-on-top **desktop widget** with a checklist and a Pomodoro timer, synced in real time.
 4. **Back up before switching devices**: Settings → Data → export a full JSON backup, then restore it on the new device.
 
 ### Android
 
-1. Download `ShiQi-1.1.0-android.apk` and install it (allow "install from unknown sources" when prompted). Requires Android 7.0+.
+1. Download `ShiQi-1.1.1-android.apk` and install it (allow "install from unknown sources" when prompted). Requires Android 7.0+.
 2. Data stays on your phone; use the same JSON backup to migrate between devices.
 
 ### Quick start
