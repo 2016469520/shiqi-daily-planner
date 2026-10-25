@@ -1,6 +1,6 @@
 {
   "name": "shiqi-daily-planner",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": true,
   "main": "electron/main.cjs",
   "description": "时栖 ShiQi — 开源、本地优先的日程计划、习惯打卡与番茄钟（Windows / Android）",
@@ -15,14 +15,15 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "check": "npm run check:desktop && npm run typecheck && npm run lint && npm run test && npm run build",
     "deploy": "npm run build && npx gh-pages -d out -b gh-pages",
     "build:static": "cross-env BUILD_STATIC=1 NEXT_PUBLIC_LOCAL_ONLY=1 next build",
     "desktop:dev": "cross-env ELECTRON_START_URL=http://localhost:3000 electron .",
     "desktop:run": "npm run build:static && electron .",
-    "dist:win": "npm run build:static && electron-builder --win --config electron-builder.yml",
+    "dist:win": "npm run check:desktop && npm run build:static && electron-builder --win --config electron-builder.yml",
     "android:sync": "npm run build:static && cap sync android",
-    "android:apk": "npm run build:static && cap sync android && cd android && gradlew.bat assembleDebug"
+    "android:apk": "npm run build:static && cap sync android && cd android && gradlew.bat assembleDebug",
+    "check:desktop": "node scripts/check-desktop.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

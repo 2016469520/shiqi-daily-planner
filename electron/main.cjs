@@ -324,9 +324,6 @@ function ensureWidgetVisible() {
   }
   // 停靠但被隐藏：展开回正常形态再显示
   if (loadState().widget.docked) undockWidget()
-    widgetWindow = createWidgetWindow()
-    return
-  }
   // 位置可能在屏幕外或尺寸被压得很小，重新校验并矫正
   const bounds = widgetWindow.getBounds()
   if (!isPositionVisible(bounds)) {
