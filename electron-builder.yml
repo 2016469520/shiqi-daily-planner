@@ -32,7 +32,8 @@ win:
 
 portable:
   artifactName: ShiQi-${version}-portable.${ext}
-  unpackDirName: ShiQi
+  # NSIS creates a fresh per-launch directory; old running versions cannot lock its files.
+  unpackDirName: true
 
 # 打包结果不参与签名（个人使用，无证书）
 forceCodeSigning: false
