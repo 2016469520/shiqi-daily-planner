@@ -7,6 +7,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { FocusSession, FocusSessionFormData, TimerMode } from '@/types'
 import { toast } from 'sonner'
 import { notifyDataChanged } from '@/lib/widget-sync'
+import { showBrowserNotification } from '@/lib/utils/notifications'
+import { crossedStopwatchReminder, formatClock } from '@/lib/focus/focus-core'
 
 const STORAGE_KEY = 'plan-calendar-active-focus'
 
@@ -115,6 +117,17 @@ export function useFocus() {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
       queryClient.invalidateQueries({ queryKey: ['focus', 'stats'] })
       toast.success('专注完成！', { duration: 3000 })
+      // 系统级提醒：浮窗里开的番茄钟，主窗口不看得到这里也照样提醒
+      showBrowserNotification(
+        mode === 'stopwatch' ? '⏱ 专注结束' : '🍅 番茄完成',
+        {
+          body:
+            mode === 'stopwatch'
+              ? `这段专注持续了 ${formatClock(Math.max(0, elapsed))}，休息一下吧`
+              : `${mins} 分钟的专注结束啦，起来走两步吧`,
+          tag: 'focus-complete',
+        }
+      )
     } catch {
       toast.error('保存专注记录失败')
     }
@@ -186,6 +199,15 @@ export function useFocus() {
 
     timerRef.current = setInterval(() => {
       if (timerMode === 'stopwatch') {
+        // 正计时：每满 30 分钟系统提醒一次（用区间判断，丢拍也不会漏提醒）
+        const prevElapsed = latestRef.current.elapsedSeconds
+        if (crossedStopwatchReminder(prevElapsed, prevElapsed + 1)) {
+          showBrowserNotification('⏱ 专注提醒', {
+            body: `已经专注 ${Math.round((prevElapsed + 1) / 60)} 分钟啦，起来喝口水休息一下`,
+            tag: 'focus-stopwatch',
+          })
+          toast.info(`已专注 ${Math.round((prevElapsed + 1) / 60)} 分钟`, { duration: 3000 })
+        }
         // Stopwatch: increment elapsed
         setElapsedSeconds((prev) => {
           const next = prev + 1

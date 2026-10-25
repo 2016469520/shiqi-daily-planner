@@ -19,7 +19,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { user, isLoading } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
-  const isWidget = pathname?.startsWith('/widget') ?? false
+  const isBareWindow = !!(pathname?.startsWith('/widget') || pathname?.startsWith('/pet'))
 
   useInitializeDefaultTags()
   // 掉帧时自动降级装饰效果（不影响功能）
@@ -47,14 +47,14 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   // Redirect to login if not authenticated and not already on login page
   useEffect(() => {
-    if (isWidget) return
+    if (isBareWindow) return
     if (!isLoading && !user && pathname !== '/login') {
       router.replace('/login')
     }
-  }, [isLoading, user, pathname, router, isWidget])
+  }, [isLoading, user, pathname, router, isBareWindow])
 
   // 浮窗是独立的无边框小窗，不套用侧边栏 / 底部导航
-  if (isWidget) {
+  if (isBareWindow) {
     return <>{children}</>
   }
 

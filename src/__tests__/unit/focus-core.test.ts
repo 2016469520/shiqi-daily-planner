@@ -3,9 +3,11 @@ import {
   MAX_MINUTES,
   MIN_MINUTES,
   FOCUS_PRESETS,
+  STOPWATCH_REMIND_SECONDS,
   adjustMinutes,
   clampMinutes,
   countdownProgress,
+  crossedStopwatchReminder,
   formatClock,
   overtimeLabel,
   stopwatchProgress,
@@ -79,5 +81,31 @@ describe('进度与超时', () => {
     expect(overtimeLabel(25 * 60 + 12, 25)).toBe('+00:12')
     expect(overtimeLabel(25 * 60 + 192, 25)).toBe('+03:12')
     expect(overtimeLabel(100, 0)).toBeNull()
+  })
+})
+
+describe('正计时的整点提醒判定', () => {
+  it('跨过 30 分钟边界时触发', () => {
+    expect(crossedStopwatchReminder(30 * 60 - 1, 30 * 60)).toBe(true)
+    expect(crossedStopwatchReminder(30 * 60 - 2, 30 * 60 - 1)).toBe(false)
+  })
+
+  it('定时器丢拍跳过整点也能触发（区间判断）', () => {
+    expect(crossedStopwatchReminder(30 * 60 - 5, 30 * 60 + 3)).toBe(true)
+    expect(crossedStopwatchReminder(29 * 60, 61 * 60)).toBe(true)
+  })
+
+  it('没有跨过边界、时间倒退或相同秒都不触发', () => {
+    expect(crossedStopwatchReminder(100, 200)).toBe(false)
+    expect(crossedStopwatchReminder(200, 200)).toBe(false)
+    expect(crossedStopwatchReminder(200, 100)).toBe(false)
+    // 已在 30 分钟整上，只走了 1 秒：还在同一个区间里
+    expect(crossedStopwatchReminder(30 * 60, 30 * 60 + 1)).toBe(false)
+  })
+
+  it('整点倍数逐个触发', () => {
+    expect(crossedStopwatchReminder(60 * 60 - 1, 60 * 60, STOPWATCH_REMIND_SECONDS)).toBe(true)
+    expect(crossedStopwatchReminder(0, 1)).toBe(false)
+    expect(crossedStopwatchReminder(10, 20, 0)).toBe(false)
   })
 })

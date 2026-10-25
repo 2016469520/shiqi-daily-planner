@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { getDesktopBridge, type DesktopBridge } from '@/lib/desktop-bridge'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
 import { MonitorSmartphone, Pin, PinOff, Eye, EyeOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -24,6 +25,8 @@ export function DesktopWidgetControl({ variant = 'sidebar' }: { variant?: 'sideb
   )
   const [visible, setVisible] = useState(false)
   const [pinned, setPinned] = useState(true)
+  const [dockEnabled, setDockEnabled] = useState(false)
+  const [petEnabled, setPetEnabled] = useState(false)
 
   useEffect(() => {
     if (!bridge) return
@@ -38,6 +41,18 @@ export function DesktopWidgetControl({ variant = 'sidebar' }: { variant?: 'sideb
       .isPinned()
       .then((value) => {
         if (!cancelled) setPinned(value)
+      })
+      .catch(() => {})
+    bridge
+      .getDockState()
+      .then((state) => {
+        if (!cancelled) setDockEnabled(state.enabled)
+      })
+      .catch(() => {})
+    bridge
+      .isPetEnabled()
+      .then((value) => {
+        if (!cancelled) setPetEnabled(value)
       })
       .catch(() => {})
     return () => {
@@ -57,19 +72,48 @@ export function DesktopWidgetControl({ variant = 'sidebar' }: { variant?: 'sideb
     setPinned(await bridge.togglePin())
   }, [bridge])
 
+  const toggleDock = useCallback(
+    async (next: boolean) => {
+      if (!bridge) return
+      setDockEnabled(next)
+      try {
+        const state = await bridge.setDockEnabled(next)
+        setDockEnabled(state.enabled)
+        toast.success(next ? '已开启贴边隐藏：把浮窗拖到屏幕边缘试试' : '已关闭贴边隐藏', { duration: 2200 })
+      } catch {
+        setDockEnabled(!next)
+      }
+    },
+    [bridge]
+  )
+
+  const togglePet = useCallback(
+    async (next: boolean) => {
+      if (!bridge) return
+      setPetEnabled(next)
+      try {
+        setPetEnabled(await bridge.setPetEnabled(next))
+        if (next) toast.success('桌宠已上桌：左键说话，右键菜单', { duration: 2500 })
+      } catch {
+        setPetEnabled(!next)
+      }
+    },
+    [bridge]
+  )
+
   if (!bridge) return null
 
   if (variant === 'card') {
     return (
-      <section className="surface p-4">
+      <section className="surface p-4" data-testid="desktop-widget-card">
         <div className="flex items-start gap-3">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
             <MonitorSmartphone className="h-4 w-4" />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 className="text-section">桌面浮窗</h2>
+            <h2 className="text-section">桌面浮窗与桌宠</h2>
             <p className="mt-0.5 text-caption text-muted-foreground">
-              一个常驻桌面角落的小清单，随时勾选、随手加事项；关闭主窗口后它仍留在桌面上
+              一个常驻桌面角落的小清单，随时勾选、随手加事项；也可以变身成桌宠宝儿姐
             </p>
           </div>
         </div>
@@ -82,6 +126,27 @@ export function DesktopWidgetControl({ variant = 'sidebar' }: { variant?: 'sideb
             {pinned ? <PinOff className="mr-1.5 h-4 w-4" /> : <Pin className="mr-1.5 h-4 w-4" />}
             {pinned ? '取消置顶' : '置顶浮窗'}
           </Button>
+        </div>
+
+        <div className="mt-3 space-y-3 border-t border-border pt-3">
+          <label className="flex cursor-pointer items-start gap-3" data-testid="dock-toggle-row">
+            <Switch checked={dockEnabled} onCheckedChange={toggleDock} className="mt-0.5" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-body text-foreground">贴边隐藏</span>
+              <span className="mt-0.5 block text-caption text-muted-foreground">
+                把浮窗拖到屏幕边缘时缩成一条小边条，鼠标一碰就弹回来
+              </span>
+            </span>
+          </label>
+          <label className="flex cursor-pointer items-start gap-3" data-testid="pet-toggle-row">
+            <Switch checked={petEnabled} onCheckedChange={togglePet} className="mt-0.5" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-body text-foreground">桌宠模式（宝儿姐）</span>
+              <span className="mt-0.5 block text-caption text-muted-foreground">
+                浮窗变身桌宠：左键问她问候 / 剩余任务 / 专注状态，右键打开菜单，可随时切回
+              </span>
+            </span>
+          </label>
         </div>
       </section>
     )

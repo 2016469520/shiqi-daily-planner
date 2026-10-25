@@ -27,6 +27,23 @@ export function clampMinutes(value: number): number {
   return Math.min(MAX_MINUTES, Math.max(MIN_MINUTES, Math.round(value)))
 }
 
+/** 正计时每 30 分钟提醒一次 */
+export const STOPWATCH_REMIND_SECONDS = 30 * 60
+
+/**
+ * 正计时是否刚好跨过一个提醒点（prev 还没到、next 到了/过了）。
+ * 用区间判断而不是 next % N === 0，避免渲染或定时器丢拍时整点被跳过。
+ */
+export function crossedStopwatchReminder(
+  prevSeconds: number,
+  nextSeconds: number,
+  intervalSeconds: number = STOPWATCH_REMIND_SECONDS
+): boolean {
+  if (intervalSeconds <= 0) return false
+  if (nextSeconds <= prevSeconds) return false
+  return Math.floor(nextSeconds / intervalSeconds) > Math.floor(prevSeconds / intervalSeconds)
+}
+
 /**
  * 调整时长。默认 1 分钟细调；按住加速键（Shift / 长按）时以 5 分钟递进。
  */

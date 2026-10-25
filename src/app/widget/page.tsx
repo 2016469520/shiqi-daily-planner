@@ -8,7 +8,7 @@ import { useToday } from '@/hooks/use-today'
 import { useCrossWindowSync } from '@/hooks/use-cross-window-sync'
 import { format, parseISO, formatWeekday } from '@/lib/utils/date'
 import { defaultPeriodByTime } from '@/lib/utils/period'
-import { getDesktopBridge } from '@/lib/desktop-bridge'
+import { getDesktopBridge, type DockState } from '@/lib/desktop-bridge'
 import { notifyDataChanged } from '@/lib/widget-sync'
 import { setTaskCompletion } from '@/lib/tasks/task-completion'
 import { PERIOD_LABELS } from '@/lib/constants'
@@ -16,7 +16,12 @@ import { HomeFocusTimer } from '@/components/focus/focus-timer'
 import { WidgetTaskForm, type WidgetTaskDraft } from '@/components/widget/widget-task-form'
 import { cn } from '@/lib/utils'
 import {
+  Cat,
   Check,
+  ChevronsDown,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronsUp,
   ListTodo,
   Loader2,
   Maximize2,
@@ -81,6 +86,7 @@ export default function WidgetPage() {
   const [busyId, setBusyId] = useState<string | null>(null)
   const [form, setForm] = useState<{ mode: 'create' | 'edit'; task?: Task } | null>(null)
   const [savingForm, setSavingForm] = useState(false)
+  const [dock, setDock] = useState<DockState | null>(null)
 
   useCrossWindowSync()
 
@@ -88,6 +94,12 @@ export default function WidgetPage() {
     document.documentElement.classList.add('widget-window')
     return () => document.documentElement.classList.remove('widget-window')
   }, [])
+
+  useEffect(() => {
+    if (!bridge) return
+    bridge.getDockState().then(setDock).catch(() => {})
+    return bridge.onDockChanged(setDock)
+  }, [bridge])
 
   useEffect(() => {
     if (!bridge) return
@@ -221,6 +233,38 @@ export default function WidgetPage() {
     )
   }
 
+  // 贴边停靠中：整窗缩成一条小边条，碰一下或点一下就弹回来
+  if (dock?.edge) {
+    const vertical = dock.edge === 'left' || dock.edge === 'right'
+    const Chevron =
+      dock.edge === 'left' ? ChevronsRight
+      : dock.edge === 'right' ? ChevronsLeft
+      : dock.edge === 'top' ? ChevronsDown
+      : ChevronsUp
+    return (
+      <button
+        type="button"
+        data-testid="widget-dock-tab"
+        title="展开浮窗"
+        aria-label="展开浮窗"
+        onClick={() => bridge?.undockWidget().catch(() => {})}
+        onMouseEnter={() => bridge?.undockWidget().catch(() => {})}
+        className={cn(
+          'flex h-screen w-full items-center justify-center gap-1.5 bg-primary text-primary-foreground ui-transition hover:brightness-110',
+          vertical ? 'flex-col' : 'flex-row'
+        )}
+      >
+        <span
+          className="text-micro font-medium tracking-[0.3em] text-primary-foreground"
+          style={vertical ? { writingMode: 'vertical-rl' } : undefined}
+        >
+          时栖
+        </span>
+        <Chevron className="h-3.5 w-3.5 shrink-0 opacity-80" />
+      </button>
+    )
+  }
+
   return (
     <div className="h-screen w-full overflow-hidden bg-card">
       <div className="relative flex h-full w-full flex-col overflow-hidden bg-card ring-1 ring-inset ring-border">
@@ -231,6 +275,15 @@ export default function WidgetPage() {
             {format(parseISO(today), 'M月d日')} {formatWeekday(today)}
           </span>
           <div className="app-no-drag flex shrink-0 items-center gap-0.5">
+            <button
+              type="button"
+              title="变身桌宠（宝儿姐）"
+              aria-label="变身桌宠"
+              onClick={() => bridge?.setPetEnabled(true).catch(() => {})}
+              className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground ui-transition hover:bg-accent hover:text-foreground"
+            >
+              <Cat className="h-3.5 w-3.5" />
+            </button>
             <button
               type="button"
               title={pinned ? '取消置顶' : '置顶'}

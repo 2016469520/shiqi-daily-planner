@@ -18,8 +18,17 @@ const APP_TITLE = '时栖'
 const WIDGET_WIDTH = 340
 const WIDGET_HEIGHT = 460
 
+const PET_WIDTH = 280
+const PET_HEIGHT = 380
+
+// 贴边隐藏：浮窗拖到离屏幕边缘这么近时缩成小条
+const DOCK_THRESHOLD = 32
+const DOCK_TAB_THICKNESS = 18
+const DOCK_TAB_LENGTH = 220
+
 let mainWindow = null
 let widgetWindow = null
+let petWindow = null
 let tray = null
 let isQuitting = false
 
@@ -78,6 +87,7 @@ function registerProtocolHandler() {
 const DEFAULT_STATE = {
   main: { width: 1280, height: 860 },
   widget: { visible: true, pinned: true },
+  pet: { visible: false },
 }
 
 function stateFile() {
@@ -90,6 +100,7 @@ function loadState() {
     return {
       main: { ...DEFAULT_STATE.main, ...(raw.main || {}) },
       widget: { ...DEFAULT_STATE.widget, ...(raw.widget || {}) },
+      pet: { ...DEFAULT_STATE.pet, ...(raw.pet || {}) },
     }
   } catch {
     return JSON.parse(JSON.stringify(DEFAULT_STATE))
@@ -243,6 +254,17 @@ function createWidgetWindow() {
     win.setAlwaysOnTop(true, 'floating')
   }
 
+  // 上次退出时停靠在边缘：直接以小条的形态出现（窗口还是隐藏状态，不会闪）
+  if (saved.docked) {
+    const tab = dockedTabBounds(saved.docked, saved.dockBounds || {
+      x: saved.x, y: saved.y, width: saved.width || WIDGET_WIDTH, height: saved.height || WIDGET_HEIGHT,
+    })
+    if (tab) {
+      win.setMinimumSize(1, 1)
+      win.setBounds(tab)
+    }
+  }
+
   const shouldShow = loadState().widget.visible !== false
 
   // 无边框窗口在部分显卡上 ready-to-show 不触发，这里用 did-finish-load + 兜底定时器
@@ -255,8 +277,21 @@ function createWidgetWindow() {
   setTimeout(reveal, 2500)
   if (shouldShow) win.once('ready-to-show', () => win.showInactive())
 
-  win.on('resize', () => persistBounds('widget', win))
-  win.on('move', () => persistBounds('widget', win))
+  const persistIfFloating = () => {
+    if (loadState().widget.docked) return
+    persistBounds('widget', win)
+  }
+  win.on('resize', persistIfFloating)
+  win.on('move', persistIfFloating)
+
+  // 拖动结束后：开了贴边隐藏 且 离边缘足够近 → 缩成小条
+  win.on('moved', () => {
+    const state = loadState()
+    if (state.widget.docked) return
+    if (!state.widget.dockEdgeEnabled) return
+    const edge = nearestDockEdge(win.getBounds())
+    if (edge) dockWidget(edge)
+  })
 
   // 关掉浮窗只是隐藏，主窗口继续运行
   win.on('close', (event) => {
@@ -273,6 +308,8 @@ function createWidgetWindow() {
 }
 
 function ensureWidgetVisible() {
+  // 停靠成小条时先展开回正常形态
+  if (loadState().widget.docked) undockWidget()
   if (!widgetWindow || widgetWindow.isDestroyed()) {
     widgetWindow = createWidgetWindow()
     return
@@ -307,6 +344,219 @@ function toggleWidgetVisible() {
   }
   ensureWidgetVisible()
   return true
+}
+
+// ---------- 浮窗贴边隐藏 ----------
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value))
+}
+
+/** 停靠后小条的位置：贴着 edge，长度取原窗口高度/宽度（封顶 220） */
+function dockedTabBounds(edge, bounds) {
+  const display = screen.getDisplayNearestPoint({
+    x: bounds.x + bounds.width / 2,
+    y: bounds.y + bounds.height / 2,
+  })
+  const area = display.workArea
+  if (edge === 'left' || edge === 'right') {
+    const length = clamp(bounds.height, 120, DOCK_TAB_LENGTH)
+    return {
+      x: edge === 'left' ? area.x : area.x + area.width - DOCK_TAB_THICKNESS,
+      y: clamp(bounds.y, area.y + 8, area.y + area.height - length - 8),
+      width: DOCK_TAB_THICKNESS,
+      height: length,
+    }
+  }
+  const length = clamp(bounds.width, 120, DOCK_TAB_LENGTH)
+  return {
+    x: clamp(bounds.x, area.x + 8, area.x + area.width - length - 8),
+    y: edge === 'top' ? area.y : area.y + area.height - DOCK_TAB_THICKNESS,
+    width: length,
+    height: DOCK_TAB_THICKNESS,
+  }
+}
+
+/** 窗口离哪条边足够近（负数 = 已越界，也算贴上） */
+function nearestDockEdge(bounds) {
+  const display = screen.getDisplayNearestPoint({
+    x: bounds.x + bounds.width / 2,
+    y: bounds.y + bounds.height / 2,
+  })
+  const area = display.workArea
+  const distances = {
+    left: bounds.x - area.x,
+    right: area.x + area.width - (bounds.x + bounds.width),
+    top: bounds.y - area.y,
+    bottom: area.y + area.height - (bounds.y + bounds.height),
+  }
+  let best = null
+  let bestDistance = DOCK_THRESHOLD
+  for (const edge of Object.keys(distances)) {
+    const d = distances[edge]
+    if (d >= -40 && d < bestDistance) {
+      best = edge
+      bestDistance = Math.max(0, d)
+    }
+  }
+  return best
+}
+
+function currentDockState() {
+  const widget = loadState().widget
+  return { enabled: !!widget.dockEdgeEnabled, edge: widget.docked ?? null }
+}
+
+function notifyDockChanged() {
+  if (widgetWindow && !widgetWindow.isDestroyed()) {
+    try {
+      widgetWindow.webContents.send('widget:dock-changed', currentDockState())
+    } catch {
+      /* 窗口可能正在销毁 */
+    }
+  }
+}
+
+function dockWidget(edge) {
+  if (!widgetWindow || widgetWindow.isDestroyed()) return
+  const bounds = widgetWindow.getBounds()
+  const tab = dockedTabBounds(edge, bounds)
+  if (!tab) return
+  // 小条尺寸低于窗口最小限制，先放宽
+  widgetWindow.setMinimumSize(1, 1)
+  saveState({ widget: { ...loadState().widget, docked: edge, dockBounds: bounds } })
+  widgetWindow.setBounds(tab)
+  notifyDockChanged()
+}
+
+function undockWidget() {
+  const state = loadState()
+  if (!state.widget.docked) return
+  saveState({ widget: { ...state.widget, docked: null, dockBounds: null } })
+  if (widgetWindow && !widgetWindow.isDestroyed()) {
+    widgetWindow.setMinimumSize(280, 260)
+    const restore = state.widget.dockBounds
+    if (restore) {
+      if (isPositionVisible(restore)) {
+        widgetWindow.setBounds(restore)
+      } else {
+        const fallback = defaultWidgetPosition(loadState())
+        widgetWindow.setBounds({ ...restore, x: fallback.x, y: fallback.y })
+      }
+    }
+  }
+  notifyDockChanged()
+}
+
+// ---------- 桌宠（浮窗的桌宠形态） ----------
+
+function createPetWindow() {
+  const state = loadState()
+  const saved = state.pet || {}
+  const { workArea } = screen.getPrimaryDisplay()
+  const fallback = {
+    x: workArea.x + 96,
+    y: workArea.y + workArea.height - PET_HEIGHT - 48,
+  }
+  const useSaved = typeof saved.x === 'number' && isPositionVisible({ x: saved.x, y: saved.y })
+
+  const win = new BrowserWindow({
+    width: saved.width || PET_WIDTH,
+    height: saved.height || PET_HEIGHT,
+    x: useSaved ? saved.x : fallback.x,
+    y: useSaved ? saved.y : fallback.y,
+    minWidth: 200,
+    minHeight: 260,
+    maxWidth: 520,
+    maxHeight: 680,
+    frame: false,
+    transparent: true,
+    resizable: true,
+    maximizable: false,
+    fullscreenable: false,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    show: false,
+    hasShadow: false,
+    title: `${APP_TITLE} 桌宠`,
+    webPreferences: {
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+      spellcheck: false,
+      backgroundThrottling: false,
+      preload: path.join(__dirname, 'preload.cjs'),
+    },
+  })
+
+  win.setAlwaysOnTop(true, 'screen-saver')
+
+  const reveal = () => {
+    if (!win.isDestroyed() && !win.isVisible() && loadState().pet.visible !== false) {
+      win.showInactive()
+    }
+  }
+  win.webContents.once('did-finish-load', () => setTimeout(reveal, 60))
+  setTimeout(reveal, 2500)
+
+  const persistPet = () => {
+    if (win.isDestroyed()) return
+    const bounds = win.getNormalBounds()
+    saveState({ pet: { ...loadState().pet, ...bounds } })
+  }
+  win.on('resize', persistPet)
+  win.on('move', persistPet)
+
+  // 关掉桌宠 = 收起桌宠并带回浮窗
+  win.on('close', (event) => {
+    if (isQuitting) return
+    event.preventDefault()
+    win.hide()
+    saveState({ pet: { ...loadState().pet, visible: false } })
+    app.emit('pet-visibility-changed')
+    ensureWidgetVisible()
+  })
+
+  attachNavigationGuards(win)
+  win.loadURL(DEV_URL ? `${DEV_URL}/pet/` : `${APP_ORIGIN}/pet/`)
+  return win
+}
+
+function isPetVisible() {
+  return !!petWindow && !petWindow.isDestroyed() && petWindow.isVisible()
+}
+
+function setPetEnabled(enabled) {
+  if (enabled) {
+    if (!petWindow || petWindow.isDestroyed()) {
+      petWindow = createPetWindow()
+    } else {
+      petWindow.showInactive()
+      const bounds = petWindow.getNormalBounds()
+      if (!isPositionVisible(bounds)) {
+        const { workArea } = screen.getPrimaryDisplay()
+        petWindow.setBounds({
+          ...bounds,
+          x: workArea.x + 96,
+          y: workArea.y + workArea.height - PET_HEIGHT - 48,
+        })
+      }
+    }
+    saveState({ pet: { ...loadState().pet, visible: true } })
+    // 桌宠和浮窗不同屏：先收起浮窗，桌宠菜单里随时可以再打开
+    if (widgetWindow && !widgetWindow.isDestroyed() && widgetWindow.isVisible()) {
+      widgetWindow.hide()
+      saveState({ widget: { ...loadState().widget, visible: false } })
+    }
+    app.emit('pet-visibility-changed')
+    return true
+  }
+
+  if (petWindow && !petWindow.isDestroyed()) petWindow.hide()
+  saveState({ pet: { ...loadState().pet, visible: false } })
+  app.emit('pet-visibility-changed')
+  ensureWidgetVisible()
+  return false
 }
 
 function showMainWindow() {
@@ -368,6 +618,7 @@ function createTray() {
   const refreshMenu = () => {
     const widgetVisible = !!widgetWindow && widgetWindow.isVisible()
     const pinned = !!widgetWindow && widgetWindow.isAlwaysOnTop()
+    const petVisible = isPetVisible()
     tray.setContextMenu(
       Menu.buildFromTemplate([
         { label: `打开${APP_TITLE}`, click: () => showMainWindow() },
@@ -390,6 +641,15 @@ function createTray() {
             refreshMenu()
           },
         },
+        {
+          label: '桌宠（宝儿姐）',
+          type: 'checkbox',
+          checked: petVisible,
+          click: () => {
+            setPetEnabled(!petVisible)
+            refreshMenu()
+          },
+        },
         { type: 'separator' },
         {
           label: '退出',
@@ -406,6 +666,7 @@ function createTray() {
   tray.on('click', () => showMainWindow())
   tray.on('right-click', refreshMenu)
   app.on('widget-visibility-changed', refreshMenu)
+  app.on('pet-visibility-changed', refreshMenu)
 }
 
 // ---------- IPC ----------
@@ -520,6 +781,37 @@ ipcMain.handle('widget:toggle-pin', () => {
     return widgetWindow.isAlwaysOnTop()
   })
 
+  // 浮窗贴边隐藏
+  ipcMain.handle('widget:get-dock-state', () => currentDockState())
+  ipcMain.handle('widget:set-dock-enabled', (_event, enabled) => {
+    saveState({ widget: { ...loadState().widget, dockEdgeEnabled: !!enabled } })
+    if (!enabled) undockWidget()
+    return currentDockState()
+  })
+  ipcMain.handle('widget:undock', () => {
+    undockWidget()
+    return currentDockState()
+  })
+
+  // 桌宠
+  ipcMain.handle('pet:set-enabled', (_event, enabled) => setPetEnabled(!!enabled))
+  ipcMain.handle('pet:is-enabled', () => isPetVisible())
+  ipcMain.handle('pet:move-by', (_event, dx, dy) => {
+    if (!petWindow || petWindow.isDestroyed()) return
+    if (!Number.isFinite(dx) || !Number.isFinite(dy)) return
+    const bounds = petWindow.getBounds()
+    petWindow.setBounds({ ...bounds, x: Math.round(bounds.x + dx), y: Math.round(bounds.y + dy) })
+  })
+  ipcMain.handle('pet:set-ignore-mouse', (_event, ignore) => {
+    if (!petWindow || petWindow.isDestroyed()) return
+    try {
+      petWindow.setIgnoreMouseEvents(!!ignore, { forward: true })
+    } catch {
+      /* 旧版本 Electron 可能不支持 forward */
+      petWindow.setIgnoreMouseEvents(!!ignore)
+    }
+  })
+
   ipcMain.handle('app:quit', () => {
     isQuitting = true
     app.quit()
@@ -550,6 +842,15 @@ if (!gotLock) {
     } catch (err) {
       logCrash('createWidgetWindow', err)
       widgetWindow = null
+    }
+    // 上次退出时桌宠还开着：原样恢复
+    try {
+      if (loadState().pet.visible) {
+        petWindow = createPetWindow()
+      }
+    } catch (err) {
+      logCrash('createPetWindow', err)
+      petWindow = null
     }
     try {
       createTray()
