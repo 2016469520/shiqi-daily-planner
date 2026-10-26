@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { MonitorSmartphone, Pin, PinOff, Eye, EyeOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { PetPreferencesControl } from './pet-preferences'
 import { toast } from 'sonner'
 
 /** bridge 是外部注入的，用 useSyncExternalStore 读取可以避免 SSR 水合不一致 */
@@ -93,7 +94,7 @@ export function DesktopWidgetControl({ variant = 'sidebar' }: { variant?: 'sideb
       setPetEnabled(next)
       try {
         setPetEnabled(await bridge.setPetEnabled(next))
-        if (next) toast.success('桌宠已上桌：左键说话，右键菜单', { duration: 2500 })
+        if (next) toast.success('桌宠已上桌：左键说话，按住拖动，右键换形态', { duration: 2500 })
       } catch {
         setPetEnabled(!next)
       }
@@ -143,10 +144,11 @@ export function DesktopWidgetControl({ variant = 'sidebar' }: { variant?: 'sideb
             <span className="min-w-0 flex-1">
               <span className="block text-body text-foreground">桌宠模式（宝儿姐）</span>
               <span className="mt-0.5 block text-caption text-muted-foreground">
-                浮窗变身桌宠：左键问她问候 / 剩余任务 / 专注状态，右键打开菜单，可随时切回
+                左键说话，按住人物拖动，右键换形态；人物下方的「设置」可打开浮窗或收起桌宠
               </span>
             </span>
           </label>
+          <PetPreferencesControl />
         </div>
       </section>
     )

@@ -491,3 +491,10 @@ html.pet-window body {
   border: 1px solid color-mix(in oklab, var(--primary) 32%, transparent);
   color: color-mix(in oklab, var(--primary) 82%, var(--foreground));
 }
+
+/* One-shot reactions keep the hit target stable between interactions. */
+@keyframes pet-react { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-3deg); } 65% { transform: rotate(3deg); } }
+@keyframes pet-bubble-enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.pet-react { animation: pet-react 420ms ease-out; transform-origin: bottom center; }
+.pet-bubble-enter { animation: pet-bubble-enter 180ms ease-out; }
+@media (prefers-reduced-motion: reduce) { .pet-react, .pet-bubble-enter { animation: none; } }

@@ -475,8 +475,8 @@ function createPetWindow() {
   const useSaved = typeof saved.x === 'number' && isPositionVisible({ x: saved.x, y: saved.y })
 
   const win = new BrowserWindow({
-    width: saved.width || PET_WIDTH,
-    height: saved.height || PET_HEIGHT,
+    width: PET_WIDTH,
+    height: PET_HEIGHT,
     x: useSaved ? saved.x : fallback.x,
     y: useSaved ? saved.y : fallback.y,
     minWidth: 200,
@@ -485,7 +485,8 @@ function createPetWindow() {
     maxHeight: 680,
     frame: false,
     transparent: true,
-    resizable: true,
+    // Resize the artwork in settings; keep enough room for bubbles and controls.
+    resizable: false,
     maximizable: false,
     fullscreenable: false,
     alwaysOnTop: true,

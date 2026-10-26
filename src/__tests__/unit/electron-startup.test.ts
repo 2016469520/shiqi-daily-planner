@@ -13,6 +13,22 @@ describe('Electron startup and widget restoration', () => {
     expect(() => new vm.Script(source, { filename: 'main.cjs' })).not.toThrow()
   })
 
+  it('reserves a stable canvas for pet controls even with old saved window dimensions', () => {
+    const start = source.indexOf('function createPetWindow()')
+    const end = source.indexOf('function isPetVisible()', start)
+    let options: Record<string, unknown> = {}
+    const win = { setAlwaysOnTop: vi.fn(), webContents: { once: vi.fn() }, on: vi.fn(), loadURL: vi.fn() }
+    const context = {
+      loadState: () => ({ pet: { width: 200, height: 260 } }),
+      screen: { getPrimaryDisplay: () => ({ workArea: { x: 0, y: 0, width: 1920, height: 1080 } }) },
+      PET_WIDTH: 280, PET_HEIGHT: 380, APP_TITLE: '时栖', APP_ORIGIN: 'app://local', DEV_URL: '',
+      BrowserWindow: function (value: Record<string, unknown>) { options = value; return win },
+      path, __dirname: 'electron', setTimeout: vi.fn(), attachNavigationGuards: vi.fn(),
+    }
+    vm.runInNewContext(source.slice(start, end) + '\ncreatePetWindow()', context)
+    expect(options).toMatchObject({ width: 280, height: 380, resizable: false, transparent: true })
+  })
+
   function run(visible: boolean, docked: string | null, absent = false) {
     const widget = { visible, docked, pinned: true }
     const win = {
