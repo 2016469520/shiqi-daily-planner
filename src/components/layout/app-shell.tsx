@@ -81,7 +81,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         {/* Main content area */}
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <div className="flex-1 overflow-y-auto pb-16 lg:pb-0">
+          <div className="scroll-thin flex-1 overflow-y-auto pb-16 lg:pb-0">
             {children}
           </div>
         </main>

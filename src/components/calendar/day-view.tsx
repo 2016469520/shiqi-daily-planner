@@ -264,7 +264,7 @@ export function DayView({ currentDate, onDateChange, embedded = false }: DayView
   )
 
   return (
-    <div className={cn('flex flex-col', !embedded && 'h-full overflow-auto')}>
+    <div className={cn('flex flex-col', !embedded && 'scroll-thin h-full overflow-auto')}>
       {/* Day header —— 嵌入模式（今日页）由页面自己的概览卡承担，避免日期与完成度重复 */}
       {!embedded && (
       <div className="sticky top-0 z-20 border-b border-border bg-background/95 py-2.5 backdrop-blur supports-[backdrop-filter]:bg-background/80">

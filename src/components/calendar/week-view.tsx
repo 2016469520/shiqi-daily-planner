@@ -173,7 +173,7 @@ export function WeekView({ currentDate, onTaskClick, onOverflowClick }: WeekView
         </div>
 
         {/* Three periods × seven days grid */}
-        <div className="flex-1 overflow-auto">
+        <div className="scroll-thin min-h-0 flex-1 overflow-auto">
           <div className="min-w-[640px]">
             {PERIOD_ORDER.map((period) => (
               <div

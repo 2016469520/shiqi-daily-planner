@@ -9,8 +9,6 @@ import { cn } from '@/lib/utils'
 import type { CalendarView, Task } from '@/types'
 import { Skeleton } from '@/components/ui/skeleton'
 
-const MAX_VISIBLE_TASKS = 3
-
 interface MonthViewProps {
   currentDate: string
   onDateClick: (date: string) => void
@@ -86,7 +84,7 @@ export function MonthView({ currentDate, onDateClick, onViewChange, onTaskClick 
   }
 
   return (
-    <div className="flex flex-col h-full overflow-auto">
+    <div className="scroll-thin flex h-full flex-col overflow-auto">
       {/* Day headers */}
       <div className="sticky top-0 z-10 grid grid-cols-7 border-b border-border bg-background">
         {['日', '一', '二', '三', '四', '五', '六'].map((day) => (
@@ -99,8 +97,10 @@ export function MonthView({ currentDate, onDateClick, onViewChange, onTaskClick 
         ))}
       </div>
 
-      {/* Calendar grid：单元格只留底色，网格线由 gap + 容器底色提供（1px） */}
-      <div className="grid grid-cols-7 auto-rows-fr flex-1 gap-px bg-border">
+      {/* Calendar grid：单元格只留底色，网格线由 gap + 容器底色提供（1px）
+          min-h-0 让栅格被上下空间约束，行高固定；超出的日程在格子内部滚动，
+          而不是把整行撑高、把月历推出视口 */}
+      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-7 gap-px bg-border">
         {days.map((day) => {
           const dateStr = format(day, 'yyyy-MM-dd')
           const dayTasks = tasksByDate[dateStr] || []
@@ -108,17 +108,26 @@ export function MonthView({ currentDate, onDateClick, onViewChange, onTaskClick 
           const allDone = dayTasks.length > 0 && doneCount === dayTasks.length
           const isCurrentMonth = isSameMonth(day, dateObj)
           const today = isToday(day)
-          const overflowCount = dayTasks.length - MAX_VISIBLE_TASKS
 
           return (
-            <button
+            <div
               key={dateStr}
+              role="button"
+              tabIndex={0}
+              aria-label={`${format(day, 'M月d日')}，${dayTasks.length} 项日程，打开日视图`}
               onClick={() => {
                 onDateClick(dateStr)
                 onViewChange('day')
               }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onDateClick(dateStr)
+                  onViewChange('day')
+                }
+              }}
               className={cn(
-                'cal-cell relative flex flex-col gap-1 bg-card p-1.5 text-left min-h-[84px]',
+                'cal-cell relative flex min-h-[84px] cursor-pointer flex-col gap-1 bg-card p-1.5 text-left',
                 'ui-transition hover:bg-accent',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
                 !isCurrentMonth && 'text-muted-foreground/60',
@@ -153,9 +162,9 @@ export function MonthView({ currentDate, onDateClick, onViewChange, onTaskClick 
                 )}
               </div>
 
-              {/* Task indicators：最多 3 条 + 溢出计数 */}
-              <div className="flex-1 space-y-0.5 overflow-hidden">
-                {dayTasks.slice(0, MAX_VISIBLE_TASKS).map((task) => (
+              {/* Task indicators：全部渲染，格子内可滚轮滚动 / 拖动滚动条 */}
+              <div className="scroll-thin min-h-0 flex-1 space-y-0.5 overflow-y-auto">
+                {dayTasks.map((task) => (
                   <div
                     key={task.id}
                     role="button"
@@ -187,16 +196,8 @@ export function MonthView({ currentDate, onDateClick, onViewChange, onTaskClick 
                     {task.title}
                   </div>
                 ))}
-                {overflowCount > 0 && (
-                  <span
-                    className="block px-1.5 text-caption tabular-nums text-muted-foreground"
-                    title={`还有 ${overflowCount} 项`}
-                  >
-                    +{overflowCount}
-                  </span>
-                )}
               </div>
-            </button>
+            </div>
           )
         })}
       </div>

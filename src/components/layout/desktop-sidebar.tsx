@@ -60,7 +60,7 @@ export function DesktopSidebar() {
       </div>
 
       {/* Grouped navigation */}
-      <nav className="flex-1 space-y-6 overflow-y-auto px-3 pb-6">
+      <nav className="scroll-thin flex-1 space-y-6 overflow-y-auto px-3 pb-6">
         {navGroups.map((group) => (
           <div key={group.id} className="space-y-1">
             <p className="px-3 pb-1 text-micro font-medium uppercase tracking-[0.12em] text-muted-foreground">

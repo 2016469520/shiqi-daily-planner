@@ -24,6 +24,8 @@ import type {
 export interface ITaskRepository {
   getByDateRange(userId: string, range: DateRange): Promise<Task[]>
   getByDate(userId: string, date: string): Promise<Task[]>
+  /** 该用户全部未删除的事项（含无日期、含历史），用于按分类的全局总览 */
+  getAll(userId: string): Promise<Task[]>
   getById(userId: string, id: string): Promise<Task | null>
   create(userId: string, data: Omit<Task, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Task>
   update(userId: string, id: string, data: Partial<Task>): Promise<Task>

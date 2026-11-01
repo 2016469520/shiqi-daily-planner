@@ -114,6 +114,32 @@ class SupabaseTaskRepository implements ITaskRepository {
     }
   }
 
+  async getAll(userId: string): Promise<Task[]> {
+    try {
+      const supabase = getSupabase()
+      // PostgREST 单次最多返回 1000 行，按 id 稳定分页取全量
+      const PAGE = 1000
+      const rows: Task[] = []
+      for (let from = 0; ; from += PAGE) {
+        const { data, error } = await supabase
+          .from('tasks')
+          .select('*, tag:tags(*)')
+          .eq('user_id', userId)
+          .is('deleted_at', null)
+          .order('id', { ascending: true })
+          .range(from, from + PAGE - 1)
+
+        if (error) throw error
+        if (!data || data.length === 0) break
+        rows.push(...data.map((t) => cleanTask(t)))
+        if (data.length < PAGE) break
+      }
+      return rows
+    } catch (e) {
+      handleError('getAll', e)
+    }
+  }
+
   async getById(userId: string, id: string): Promise<Task | null> {
     try {
       const supabase = getSupabase()

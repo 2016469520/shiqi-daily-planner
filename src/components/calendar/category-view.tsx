@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getMonthRange, todayStr } from '@/lib/utils/date'
 import { cn } from '@/lib/utils'
 import type { Task } from '@/types'
 import {
@@ -34,11 +33,11 @@ export function CategoryView({ onEditTask, onNewTask }: CategoryViewProps) {
   const [hideEmpty, setHideEmpty] = useState(true)
   const [hideDoneTasks, setHideDoneTasks] = useState(false)
 
-  const range = useMemo(() => getMonthRange(todayStr()), [])
-
+  // 按分类是全局总览（没有日期导航），因此取全部事项：
+  // 之前只取「本月」，跨月后上个月的事项会整批消失，且无日期事项永远进不来。
   const { data: tasks = [], isLoading: tasksLoading } = useQuery({
-    queryKey: ['tasks', user?.id, 'month', range.start, range.end],
-    queryFn: () => taskRepo.getByDateRange(user!.id, range),
+    queryKey: ['tasks', user?.id, 'all'],
+    queryFn: () => taskRepo.getAll(user!.id),
     enabled: !!user,
   })
 
@@ -49,7 +48,16 @@ export function CategoryView({ onEditTask, onNewTask }: CategoryViewProps) {
   })
 
   const groups = useMemo(() => {
-    return groupTasksByTag(tasks, tags, { hideEmpty, hideCancelled: true })
+    // 仓库返回顺序不稳定（Supabase 按 id 分页），这里统一按日期升序、同日按手序
+    const ordered = [...tasks].sort((a, b) => {
+      if (a.task_date !== b.task_date) {
+        if (!a.task_date) return 1
+        if (!b.task_date) return -1
+        return a.task_date < b.task_date ? -1 : 1
+      }
+      return (a.order_index ?? 0) - (b.order_index ?? 0)
+    })
+    return groupTasksByTag(ordered, tags, { hideEmpty, hideCancelled: true })
   }, [tasks, tags, hideEmpty])
 
   const toggleCategory = useCallback((tagId: string | null) => {

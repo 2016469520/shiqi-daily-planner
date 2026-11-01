@@ -233,7 +233,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Content area */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="scroll-thin flex-1 overflow-y-auto">
         <div className="w-full max-w-3xl space-y-6 px-4 py-6 lg:px-8 lg:py-8">
           {/* PWA Install — always visible at top */}
           {isInstallable && (

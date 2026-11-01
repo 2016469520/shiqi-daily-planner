@@ -69,6 +69,12 @@ class IndexedDBTaskRepository implements ITaskRepository {
     return all.filter((t) => !t.deleted_at)
   }
 
+  async getAll(userId: string): Promise<Task[]> {
+    const db = await getDB()
+    const all = await db.getAllFromIndex('tasks', 'user_id', userId)
+    return all.filter((t) => !t.deleted_at)
+  }
+
   async getById(userId: string, id: string): Promise<Task | null> {
     const db = await getDB()
     const task = await db.get('tasks', id)
