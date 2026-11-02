@@ -102,7 +102,7 @@ export function WelcomeOverlay() {
         <button
           type="button"
           onClick={dismiss}
-          className="absolute right-3 top-3 z-10 rounded-full p-1.5 text-muted-foreground ui-transition hover:bg-accent hover:text-foreground"
+          className="absolute right-3 top-3 z-10 tap-pad rounded-full p-1.5 text-muted-foreground ui-transition hover:bg-accent hover:text-foreground"
           aria-label="关闭开场页"
         >
           <X className="h-4 w-4" aria-hidden="true" />

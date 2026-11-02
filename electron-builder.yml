@@ -15,8 +15,12 @@ files:
   - "!node_modules/**/*"
   - "!**/*.map"
 
-# 没有原生依赖，跳过 rebuild 可以显著加快打包
-npmRebuild: false
+# 没有原生依赖，不需要 rebuild；依赖收集也一并跳过 —— 两件事都由 beforeBuild 钩子
+# 返回 false 来声明「node_modules 我们自己在外面处理」。files 已经排除了 node_modules，
+# 打包结果本来就不含它，但 electron-builder 默认还会 spawn 系统 shell 跑 `npm list`
+# 去收集依赖树，在 PATH 里没有系统 shell 目录的环境（CI 精简镜像 / 纯 bash 终端）会直接失败。
+# 注意：不能再写 npmRebuild: false —— 那会在这个钩子之前就 return，钩子永远不会被调用。
+beforeBuild: ./scripts/before-build.cjs
 
 asar: true
 compression: normal

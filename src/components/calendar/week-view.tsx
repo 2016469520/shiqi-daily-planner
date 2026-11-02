@@ -339,7 +339,7 @@ function DraggableTaskChip({
     >
       {/* Drag handle — separate from click */}
       <button
-        className="shrink-0 cursor-grab text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+        className="hover-reveal shrink-0 cursor-grab text-muted-foreground/50 transition-opacity active:cursor-grabbing"
         {...attributes}
         {...listeners}
         tabIndex={-1}

@@ -1,5 +1,6 @@
 import {
   Calendar,
+  CalendarClock,
   ListTodo,
   CheckSquare,
   ClipboardList,
@@ -57,11 +58,24 @@ export const navGroups: NavGroup[] = [
   },
 ]
 
-// Mobile bottom nav: top 5 main items
+// Mobile bottom nav: 5 main items + 「更多」抽屉，保证手机端能进到每一个页面
 export const mobileNavItems: NavItem[] = [
   { href: '/schedule', label: '日程', icon: ListTodo },
   { href: '/calendar', label: '日历', icon: Calendar },
   { href: '/focus', label: '专注', icon: Timer },
   { href: '/habits', label: '习惯', icon: CheckSquare },
   { href: '/settings', label: '设置', icon: Settings },
+]
+
+/**
+ * 手机底部导航放不下的页面。
+ * 桌面有侧边栏能直达，手机如果没有这个入口，统计 / 复盘 / 每日总结
+ * 就只能手打 URL 才能打开 —— 等于不存在。
+ */
+export const moreNavItems: NavItem[] = [
+  { href: '/insights', label: '统计', icon: BarChart3 },
+  { href: '/reviews', label: '复盘', icon: ClipboardList },
+  { href: '/reviews/today', label: '每日总结', icon: FileText },
+  { href: '/inbox', label: '收集箱', icon: Inbox },
+  { href: '/countdowns', label: '倒数日', icon: CalendarClock },
 ]

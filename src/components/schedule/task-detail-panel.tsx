@@ -380,7 +380,9 @@ export function TaskDetailPanel({ task, open, onClose }: TaskDetailPanelProps) {
         <DrawerHeader>
           <DrawerTitle>任务详情</DrawerTitle>
         </DrawerHeader>
-        <div className="px-4 pb-8 overflow-y-auto">{formContent}</div>
+        {/* min-h-0 flex-1 是关键：抽屉是 flex 列，只写 overflow-y-auto 的话
+            这个 div 会被内容撑到自然高度，把底部的「删除」顶出屏幕且滚不到 */}
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-8">{formContent}</div>
       </DrawerContent>
     </Drawer>
   )

@@ -185,7 +185,7 @@ export function SubtaskManager({ taskId }: SubtaskManagerProps) {
               <Button
                 variant="ghost"
                 size="icon-xs"
-                className="shrink-0 text-muted-foreground opacity-0 ui-transition hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
+                className="hover-reveal tap-pad shrink-0 text-muted-foreground ui-transition hover:text-destructive focus-visible:opacity-100"
                 onClick={() => deleteMutation.mutate(sub.id)}
                 aria-label="删除子任务"
               >

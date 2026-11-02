@@ -214,6 +214,9 @@
     @apply bg-background text-foreground;
     font-feature-settings: 'cv01' 1, 'cv03' 1, 'cv04' 1;
     text-rendering: optimizeLegibility;
+    /* 用户输入里出现长英文/无空格串时（如一长串标识符、URL），
+       默认不会断行，会直接冲出卡片盖住右侧徽标。只在放不下时才断。 */
+    overflow-wrap: break-word;
   }
   /* 数字统一等宽，避免统计跳动 */
   .tabular-nums {
@@ -458,6 +461,156 @@
 
 .scroll-thin::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+/* ============================================================
+   手机端基础适配
+   目标：状态栏/小白条不压内容、地址栏收起时高度跟着变、
+   输入框聚焦不被 iOS 放大、长串不被裁、触屏点得到。
+   ============================================================ */
+:root {
+  /* 刘海屏 / 手势条的安全区，桌面与浏览器标签页里都是 0 */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  /* 底部导航（不含安全区）的高度，与 MobileNav 的 h-14 保持一致 */
+  --mobile-nav-h: 3.5rem;
+}
+
+/* 100vh 在手机浏览器里包含地址栏，页面底部会被吃掉一截；dvh 跟随可视区 */
+.app-viewport {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* 主滚动区：移动端顶部让开状态栏，底部让开导航 + 手势条 */
+.app-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+@media (max-width: 1023px) {
+  .app-scroll {
+    padding-top: var(--safe-top);
+    padding-bottom: calc(var(--mobile-nav-h) + var(--safe-bottom) + 0.25rem);
+  }
+}
+
+/* 触屏设备：输入控件字号小于 16px 时，iOS Safari 会在聚焦瞬间把整页放大，
+   并且不会自动缩回去。这里统一抬到 16px，只作用于触屏，不动桌面排版。
+   用 :where() 把元素名压成零权重，再靠三个 :not() 拿到 0,3,0，
+   才压得住 .text-caption / .text-body 这类工具类。 */
+@media (hover: none) and (pointer: coarse) {
+  :where(input, textarea, select):not([type='checkbox']):not([type='radio']):not([type='range']) {
+    font-size: 16px;
+  }
+  /* 触摸滚动是惯性滚动，飘忽的 hover 高亮会"粘"在刚点过的元素上 */
+  .surface-interactive:hover {
+    border-color: inherit;
+    box-shadow: none;
+  }
+}
+
+/* 手机上给小字兜个底：11px 在 3x 屏上看着像 3.7pt，读起来很费劲。
+   用 max() 而不是直接覆盖 —— 设置里本来就有"字号倍率"滑块，
+   用户调大过的值要保住，这里只保证不低于 12px。
+   选择器前面加 html 是为了压过 themes.css 里带倍率的同权重规则。 */
+@media (max-width: 1023px) {
+  html .text-micro {
+    font-size: max(0.75rem, calc(0.6875rem * var(--type-scale, 1)));
+    line-height: 1.125rem;
+  }
+}
+
+/* 手机上扩大"看得见但点不到"的小图标的命中区。
+   按钮本身尺寸不变，靠伪元素向外扩 6px，不影响视觉密度。
+   注意：只在元素本身没有定位时才补 position:relative ——
+   否则会把 absolute 定位的按钮顶回文档流（表现为按钮跑到左上角）。 */
+.tap-pad:not(.absolute):not(.fixed):not(.relative):not(.sticky) {
+  position: relative;
+}
+.tap-pad::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+}
+@media (pointer: coarse) {
+  .tap-pad::after {
+    inset: -9px;
+  }
+}
+
+/* 排得比较密的一行按钮，只扩 2px，避免相邻按钮的命中区互相抢 */
+.tap-pad-sm:not(.absolute):not(.fixed):not(.relative):not(.sticky) {
+  position: relative;
+}
+.tap-pad-sm::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+}
+@media (pointer: coarse) {
+  .tap-pad-sm::after {
+    inset: -4px;
+  }
+}
+
+/* 悬停才显示的操作入口（编辑 / 删除 / 拖拽把手）。
+   只在真正有鼠标的设备上隐藏：触屏设备没有 hover，写死 opacity-0
+   会让这些入口在手机上永远不可见，等于功能不存在。 */
+@media (hover: hover) and (pointer: fine) {
+  .hover-reveal {
+    opacity: 0;
+  }
+  .group:hover .hover-reveal,
+  .group:focus-within .hover-reveal,
+  .hover-reveal:focus,
+  .hover-reveal:focus-within {
+    opacity: 1;
+  }
+}
+
+/* 月视图：桌面上每格内部可滚动、显示全部日程；
+   手机上一格只有约 55px 宽，独立滚动既难滚也看不清标题，
+   改为「最多两条 + 剩余条数」，点格子进日视图看全部。 */
+.cal-cell-more {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .cal-cell-list {
+    overflow: hidden;
+  }
+  .cal-cell-list > *:nth-child(n + 3) {
+    display: none;
+  }
+  .cal-cell-more {
+    display: block;
+  }
+}
+
+/* ------------------------------------------------------------
+   浮层高度约束
+   手机竖屏可视高度只有 570~850px，弹窗一旦超过屏幕会上下同时溢出，
+   既看不到标题也点不到底部的保存/删除按钮，而且没法滚。
+   ------------------------------------------------------------ */
+[data-slot='dialog-content'] {
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+[data-slot='drawer-content'][data-vaul-drawer-direction='bottom'] {
+  max-height: 88vh;
+  max-height: 88dvh;
+  padding-bottom: var(--safe-bottom);
+}
+
+[data-slot='sheet-content'][data-side='bottom'] {
+  max-height: 88vh;
+  max-height: 88dvh;
+  overflow-y: auto;
+  padding-bottom: var(--safe-bottom);
 }
 
 /* ============================================================

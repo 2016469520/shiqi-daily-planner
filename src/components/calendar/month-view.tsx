@@ -162,8 +162,9 @@ export function MonthView({ currentDate, onDateClick, onViewChange, onTaskClick 
                 )}
               </div>
 
-              {/* Task indicators：全部渲染，格子内可滚轮滚动 / 拖动滚动条 */}
-              <div className="scroll-thin min-h-0 flex-1 space-y-0.5 overflow-y-auto">
+              {/* Task indicators：桌面上全部渲染，格子内可滚轮滚动 / 拖动滚动条；
+                  手机上格子太窄（约 55px），只显示前两条 + 剩余条数，点格子进日视图看全部 */}
+              <div className="cal-cell-list scroll-thin min-h-0 flex-1 space-y-0.5 overflow-y-auto">
                 {dayTasks.map((task) => (
                   <div
                     key={task.id}
@@ -197,6 +198,13 @@ export function MonthView({ currentDate, onDateClick, onViewChange, onTaskClick 
                   </div>
                 ))}
               </div>
+
+              {/* 手机专用：剩余条数（桌面隐藏，见 globals.css 的 .cal-cell-more） */}
+              {dayTasks.length > 2 && (
+                <div className="cal-cell-more shrink-0 px-1.5 text-micro leading-4 text-muted-foreground">
+                  +{dayTasks.length - 2}
+                </div>
+              )}
             </div>
           )
         })}

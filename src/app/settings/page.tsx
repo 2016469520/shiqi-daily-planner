@@ -216,12 +216,14 @@ export default function SettingsPage() {
       </div>
 
       {/* Mobile section tabs */}
-      <div className="flex gap-1 overflow-x-auto border-b border-border px-3 py-2 lg:hidden">
+      {/* 手机上横向滚动会把最后一个分组切掉一半、且没有任何"还有更多"的提示，
+          直接换行铺开：多占一行，但七组设置都能看见、都能点到 */}
+      <div className="flex flex-wrap gap-1 border-b border-border px-3 py-2 lg:hidden">
         {SECTION_ITEMS.map((item) => (
           <button
             key={item.id}
             onClick={() => setActiveSection(item.id)}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-caption ui-transition ${
+            className={`tap-pad-sm shrink-0 rounded-full px-3 py-2 text-caption ui-transition ${
               activeSection === item.id
                 ? 'bg-primary font-medium text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:text-foreground'

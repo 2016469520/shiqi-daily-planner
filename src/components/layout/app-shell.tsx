@@ -60,7 +60,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
+      <div className="app-viewport flex items-center justify-center bg-background">
         <p className="text-body text-muted-foreground">加载中…</p>
       </div>
     )
@@ -75,13 +75,14 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* 沉浸氛围：场景背景在最底层，内容整体抬到 z-10 */}
       <SceneBackdrop />
 
-      <div className="relative z-10 h-screen flex overflow-hidden">
+      <div className="app-viewport relative z-10 flex overflow-hidden">
         {/* Desktop sidebar */}
         <DesktopSidebar />
 
         {/* Main content area */}
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <div className="scroll-thin flex-1 overflow-y-auto pb-16 lg:pb-0">
+        <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          {/* app-scroll：移动端顶部让开状态栏、底部让开导航与手势条（见 globals.css） */}
+          <div className="app-scroll scroll-thin flex-1 overflow-y-auto lg:pb-0">
             {children}
           </div>
         </main>

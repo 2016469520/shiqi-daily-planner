@@ -548,9 +548,9 @@ function TaskCard({
       </div>
 
       {/* Actions */}
-      <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+      <div className="hover-reveal flex shrink-0 items-center gap-0.5 transition-opacity">
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex size-7 items-center justify-center rounded-md transition-colors hover:bg-muted">
+          <DropdownMenuTrigger className="tap-pad inline-flex size-7 items-center justify-center rounded-md transition-colors hover:bg-muted">
             <MoreHorizontal className="h-3.5 w-3.5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">

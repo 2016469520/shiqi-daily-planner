@@ -172,11 +172,14 @@
   box-shadow: none;
 }
 
-/* 弹窗：云母面板 + 细描边 */
+/* 弹窗：云母面板 + 细描边。
+   透明度收到 97%：云母靠 backdrop-filter 出效果，一旦设备/WebView 不支持模糊
+   （低端机、软件渲染、部分安卓 WebView），92% 会让背后的文字直接透上来，
+   看着像半透明故障面板。97% 在支持模糊时几乎无差别，不支持时也可读。 */
 [data-theme='fluent'] [role='dialog'],
 [data-theme='fluent'] [role='menu'],
 [data-theme='fluent'] [data-slot='select-content'] {
-  background-color: color-mix(in srgb, var(--popover) 92%, transparent);
+  background-color: color-mix(in srgb, var(--popover) 97%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);

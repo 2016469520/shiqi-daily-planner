@@ -574,14 +574,14 @@ export function HabitCheckin({ compact = false }: HabitCheckinProps) {
                         {log && (
                           <>
                             <Button
-                              variant="ghost" size="icon-sm"
+                              variant="ghost" size="icon-sm" className="tap-pad"
                               onClick={() => handleEditLog(log)}
                               aria-label="编辑打卡记录"
                             >
                               <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
                             </Button>
                             <Button
-                              variant="ghost" size="icon-sm"
+                              variant="ghost" size="icon-sm" className="tap-pad"
                               onClick={() => setDeleteLog(log)}
                               aria-label="删除打卡记录"
                             >
@@ -761,7 +761,7 @@ function MinuteControl({
       <Button
         variant="outline"
         size="icon-sm"
-        className="h-8 w-8"
+        className="tap-pad-sm h-9 w-9 sm:h-8 sm:w-8"
         onClick={() => onAdjust(-step)}
         disabled={displayValue <= 0}
         aria-label={`减少 ${step}`}
@@ -818,7 +818,7 @@ function MinuteControl({
       <Button
         variant="outline"
         size="icon-sm"
-        className="h-8 w-8"
+        className="tap-pad-sm h-9 w-9 sm:h-8 sm:w-8"
         onClick={() => onAdjust(step)}
         aria-label={`增加 ${step}`}
       >

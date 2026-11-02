@@ -73,7 +73,7 @@ export function ThemeHero() {
       <button
         type="button"
         onClick={() => setCollapsed(true)}
-        className="absolute right-2 top-2 z-10 rounded-full p-1 text-muted-foreground ui-transition hover:bg-accent hover:text-foreground"
+        className="absolute right-2 top-2 z-10 tap-pad rounded-full p-1 text-muted-foreground ui-transition hover:bg-accent hover:text-foreground"
         aria-label="收起主视觉"
         title="收起（需要更大的工作区时）"
       >
