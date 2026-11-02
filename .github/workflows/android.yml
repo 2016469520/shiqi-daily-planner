@@ -39,11 +39,22 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - uses: android-actions/setup-android@v3
-
-      # variables.gradle 里 compileSdk / targetSdk 都是 36，必须装对应平台与构建工具
+      # runner 上已经装好了 Android SDK，但默认只有部分平台。
+      # 这里不用 android-actions/setup-android：v3 内部会执行 `sdkmanager tools`，
+      # 而 `tools` 包已经从 SDK 仓库移除，直接抛 "Warning: Failed to find package 'tools'"
+      # 并以 exit code 1 失败。自己调 sdkmanager 更稳。
+      # variables.gradle 里 compileSdk / targetSdk 都是 36，必须装对应平台与构建工具。
       - name: Install SDK components
-        run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+        run: |
+          set -euo pipefail
+          SDKMANAGER=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | head -1)
+          echo "使用 $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" --install "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+          "$SDKMANAGER" --list_installed | sed -n '1,20p'
 
       - name: Install dependencies
         run: npm ci
@@ -59,6 +70,9 @@ jobs:
 
       - name: Assemble debug APK
         working-directory: android
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon --stacktrace
