@@ -1,0 +1,105 @@
+name: Android APK
+
+# 为什么要有这个 workflow：
+# 前端修完之后要出安卓安装包，但本地没有 JDK / Android SDK（npm run android:apk 跑不起来）。
+# Runner 上这两样都是现成的，构建产物的 apk 体积又只有几 MB，交给 CI 最省事。
+# 触发方式：手动 workflow_dispatch，或推 v* tag 时自动跑。
+#
+# 注意：android/app/src/main/assets/public 不入库（是构建产物），所以这里必须
+# 先 build:static 再 cap sync，否则打出来的 APK 里是旧前端。
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    name: Build debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write # 需要写 release 资产
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # AGP 8.13 / Gradle 8.14.3 需要 JDK 17+，Capacitor 8 要求 21
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v3
+
+      # variables.gradle 里 compileSdk / targetSdk 都是 36，必须装对应平台与构建工具
+      - name: Install SDK components
+        run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static web app
+        run: npm run build:static
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co'
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-key'
+
+      - name: Sync web assets into Android project
+        run: npx cap sync android
+
+      - name: Assemble debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Rename and hash
+        id: pack
+        run: |
+          set -euo pipefail
+          VERSION=$(node -p "require('./package.json').version")
+          APK="ShiQi-${VERSION}-android.apk"
+          cp android/app/build/outputs/apk/debug/app-debug.apk "$APK"
+          SHA=$(sha256sum "$APK" | cut -d' ' -f1)
+          SIZE=$(stat -c%s "$APK")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Android APK"
+            echo ""
+            echo "| 项 | 值 |"
+            echo "| --- | --- |"
+            echo "| 文件 | \\`$APK\\` |"
+            echo "| 大小 | $((SIZE / 1024)) KB |"
+            echo "| SHA256 | \\`$SHA\\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shiqi-android-apk
+          path: ShiQi-*-android.apk
+          if-no-files-found: error
+
+      # 只有 tag 触发（或者对应 tag 的 release 已存在）时才挂到 release 上
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v${{ steps.pack.outputs.version }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "ShiQi-${{ steps.pack.outputs.version }}-android.apk" --clobber
+            echo "已上传到 release $TAG"
+          else
+            echo "release $TAG 不存在，跳过上传（APK 仍可在 Actions artifact 里下载）"
+          fi
