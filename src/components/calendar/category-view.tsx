@@ -114,7 +114,10 @@ export function CategoryView({ onEditTask, onNewTask }: CategoryViewProps) {
   }
 
   return (
-    <div className="flex-1 overflow-auto p-4">
+    // 父级是 min-h-0 flex-1 overflow-hidden 的普通块级容器（不是 flex），
+    // 所以这里必须用 h-full 拿到确定高度；写 flex-1 不生效，容器会被内容撑高，
+    // 再被父级 overflow-hidden 裁掉，结果既无滚动条也滚不动。
+    <div className="scroll-thin h-full overflow-auto p-4">
       {/* Controls */}
       <div className="mb-4 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
